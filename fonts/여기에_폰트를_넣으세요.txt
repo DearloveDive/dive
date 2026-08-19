@@ -1,0 +1,7 @@
+이 폴더에 NEMESYS-Regular.ttf 파일을 넣으면 영문/숫자 제목에 자동 적용됩니다.
+
+파일명은 반드시 아래와 동일해야 합니다.
+  NEMESYS-Regular.ttf
+
+폰트가 없으면 비슷한 각진 폰트(Chakra Petch / Orbitron)로 자동 대체됩니다.
+한글은 NEMESYS 에 글자가 없으므로 Noto Sans KR 로 표시됩니다. (정상)
