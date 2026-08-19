@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08080a">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>VINCERE — The Dynamic of Conquest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400;1,6..96,500&family=Chakra+Petch:wght@600;700&family=Great+Vibes&family=JetBrains+Mono:wght@300;400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;500;600;700&family=Orbitron:wght@700;900&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════════════
+   NEMESYS — ./fonts/NEMESYS-Regular.ttf 를 넣으면 자동 적용
+   (없으면 Chakra Petch / Orbitron 으로 대체)
+   ════════════════════════════════════════════════════════════ */
+@font-face{
+  font-family:'NEMESYS';
+  src:url('./fonts/NEMESYS-Regular.ttf') format('truetype'),
+      url('./NEMESYS-Regular.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:swap;
+  unicode-range:U+0020-007E;           /* 영문·숫자·기호만 */
+}
+
+:root{
+  --bg:#08080a; --bg-1:#0c0c0f; --panel:#101014;
+  --line:rgba(255,255,255,.13); --line-soft:rgba(255,255,255,.06);
+  --fg:#eaeaee; --fg-dim:#8c8c95; --fg-faint:#54545c;
+  --red:#c8102e; --red-hot:#ff2137; --red-deep:#6e0a1c;
+  --maxw:1500px; --pad:clamp(16px,4vw,64px);
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  --f-nem:'NEMESYS','Chakra Petch','Orbitron',sans-serif;
+  --f-en:'Archivo Black',sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+  --f-kr:'Noto Sans KR',sans-serif;
+  --f-serif:'Bodoni Moda',serif;
+  /* 화려한 영어 필기체 — 더 가늘고 고전적인 느낌은 'Pinyon Script' 를 앞으로 */
+  --f-script:'Great Vibes','Pinyon Script',cursive;
+  /* 클래식 명조 (한글 + 영문) */
+  --f-classic:'Noto Serif KR','Bodoni Moda',serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-snap-type:y proximity}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-kr);font-weight:300;
+  line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+::selection{background:var(--red);color:#fff}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#08080a}
+::-webkit-scrollbar-thumb{background:#26262c}
+::-webkit-scrollbar-thumb:hover{background:var(--red)}
+
+/* ════════════════════════════════════════════════════════
+   LOADER — 지지직 글리치 로딩 화면
+   ════════════════════════════════════════════════════════ */
+.loader{position:fixed;inset:0;z-index:10000;background:#08080a;display:grid;place-items:center;
+  transition:opacity .75s cubic-bezier(.6,0,.3,1),visibility .75s}
+.loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ld-noise{position:absolute;inset:-55%;opacity:.42;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  animation:grain .85s steps(3) infinite}
+.ld-scan{position:absolute;inset:0;pointer-events:none;opacity:.65;
+  background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,.42) 3px,transparent 4px)}
+.ld-roll{position:absolute;left:0;right:0;height:180px;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.055) 45%,rgba(200,16,46,.05) 55%,transparent);
+  animation:ldroll 2.6s linear infinite}
+@keyframes ldroll{0%{top:-190px}100%{top:100%}}
+.ld-tear{position:absolute;left:0;right:0;height:2px;background:rgba(255,255,255,.5);opacity:0;pointer-events:none;
+  animation:ldtear 3.1s steps(1) infinite}
+@keyframes ldtear{
+  0%,7%{opacity:0}8%{top:22%;opacity:.55}9%{opacity:0}
+  32%{top:61%;opacity:.4}33%{opacity:0}
+  57%{top:38%;opacity:.6}58%{opacity:0}
+  81%{top:77%;opacity:.35}82%,100%{opacity:0}}
+
+.ld-in{position:relative;z-index:3;width:min(92vw,540px);padding:0 8px;text-align:center}
+.ld-brk{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:18px}
+.ld-brk .l{height:1px;background:var(--line);flex:1}
+.ld-brk span{font-family:var(--f-mono);font-size:9px;letter-spacing:.28em;color:var(--red);text-transform:uppercase;white-space:nowrap}
+
+.ld-title{font-family:var(--f-nem);font-size:clamp(40px,9.4vw,104px);line-height:1;letter-spacing:.06em;
+  color:#eaeaee;position:relative;display:inline-block;text-transform:uppercase}
+.ld-title::before,.ld-title::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;
+  overflow:hidden;pointer-events:none}
+.ld-title::before{color:var(--red);text-shadow:2px 0 var(--red);animation:ldg1 2.2s steps(1) infinite}
+.ld-title::after{color:#2fd9ff;text-shadow:-2px 0 #2fd9ff;animation:ldg2 2.7s steps(1) infinite}
+@keyframes ldg1{
+  0%,12%{clip-path:inset(0 0 100% 0);transform:none}
+  13%{clip-path:inset(12% 0 62% 0);transform:translateX(-6px)}
+  15%{clip-path:inset(0 0 100% 0);transform:none}
+  46%{clip-path:inset(54% 0 24% 0);transform:translateX(5px)}
+  48%{clip-path:inset(0 0 100% 0);transform:none}
+  73%{clip-path:inset(30% 0 44% 0);transform:translateX(-4px)}
+  75%,100%{clip-path:inset(0 0 100% 0);transform:none}}
+@keyframes ldg2{
+  0%,20%{clip-path:inset(0 0 100% 0);transform:none}
+  21%{clip-path:inset(66% 0 12% 0);transform:translateX(7px)}
+  23%{clip-path:inset(0 0 100% 0);transform:none}
+  58%{clip-path:inset(8% 0 70% 0);transform:translateX(-6px)}
+  60%{clip-path:inset(0 0 100% 0);transform:none}
+  88%{clip-path:inset(42% 0 36% 0);transform:translateX(4px)}
+  90%,100%{clip-path:inset(0 0 100% 0);transform:none}}
+.ld-title.jolt{animation:ldjolt .18s steps(2) 1}
+@keyframes ldjolt{0%{transform:translate(3px,-2px) skewX(-4deg)}50%{transform:translate(-4px,1px) skewX(3deg)}100%{transform:none}}
+
+.ld-sub{font-family:var(--f-script);font-size:clamp(17px,2.8vw,30px);color:var(--red);margin-top:2px;line-height:1.15}
+.ld-kr{font-family:var(--f-mono);font-size:9px;letter-spacing:.3em;color:var(--fg-faint);margin-top:12px;text-transform:uppercase}
+
+.ld-bar{margin-top:26px;height:3px;background:rgba(255,255,255,.09);position:relative;overflow:hidden}
+.ld-bar i{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--red);
+  box-shadow:0 0 12px rgba(200,16,46,.8);transition:width .22s linear}
+.ld-meta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.2em;color:var(--fg-faint);text-transform:uppercase}
+.ld-meta b{color:var(--red);font-weight:400}
+.ld-corner{position:absolute;width:26px;height:26px;border:1px solid rgba(200,16,46,.55);pointer-events:none}
+.ld-corner.tl{top:24px;left:24px;border-right:0;border-bottom:0}
+.ld-corner.tr{top:24px;right:24px;border-left:0;border-bottom:0}
+.ld-corner.bl{bottom:24px;left:24px;border-right:0;border-top:0}
+.ld-corner.br{bottom:24px;right:24px;border-left:0;border-top:0}
+@media(prefers-reduced-motion:reduce){
+  .ld-noise,.ld-roll,.ld-tear{display:none}
+  .ld-title::before,.ld-title::after{display:none}}
+
+/* ── 텍스처 ── */
+.tex-grain{position:fixed;inset:-60%;z-index:9998;pointer-events:none;opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  animation:grain 1.05s steps(4) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(3%,1%)}}
+.tex-scan{position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.42;
+  background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,.34) 3px,transparent 4px)}
+.tex-vig{position:fixed;inset:0;z-index:9996;pointer-events:none;
+  background:radial-gradient(125% 95% at 50% 45%,transparent 38%,rgba(0,0,0,.8) 100%)}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;max-width:var(--maxw);margin:0 auto;
+  padding:0 var(--pad);display:grid;grid-template-columns:repeat(6,1fr)}
+.grid-lines i{border-left:1px solid rgba(255,255,255,.03)}
+.grid-lines i:last-child{border-right:1px solid rgba(255,255,255,.03)}
+.tint{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 1s,background 1s;opacity:0}
+.tint.on{opacity:1}
+@media(max-width:760px){.tex-grain{opacity:.2}.tex-scan{opacity:.28}.grid-lines{grid-template-columns:repeat(2,1fr)}}
+
+/* ── 타이포 ── */
+.nem{font-family:var(--f-nem);letter-spacing:.02em;text-transform:uppercase;font-weight:400}
+.mono{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.mono-sm{font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint)}
+.red{color:var(--red)}.dim{color:var(--fg-dim)}.faint{color:var(--fg-faint)}
+.serif-i{font-family:var(--f-serif);font-style:italic}
+.script{font-family:var(--f-script);font-weight:400;letter-spacing:.01em;line-height:1.2;text-transform:none}
+.classic{font-family:var(--f-classic);font-weight:400}
+.kr-body{font-size:13.5px;line-height:1.95;color:var(--fg-dim);letter-spacing:-.01em}
+.kr-body strong{color:var(--fg);font-weight:500}
+.kr-body em{font-style:normal;color:var(--red-hot)}
+
+/* ── 오너먼트 ── */
+.rule{height:1px;background:var(--line);width:100%}
+.rule-red{height:1px;background:var(--red);width:100%}
+.dots{display:flex;gap:5px;align-items:center}
+.dots i{width:4px;height:4px;background:var(--fg-faint)}
+.dots i.on{background:var(--red)}
+.checker{height:8px;width:100%;opacity:.85;
+  background-image:linear-gradient(45deg,var(--red) 25%,transparent 25% 75%,var(--red) 75%),
+                   linear-gradient(45deg,var(--red) 25%,transparent 25% 75%,var(--red) 75%);
+  background-size:8px 8px;background-position:0 0,4px 4px}
+.cross{width:12px;height:12px;position:relative;flex:none;display:inline-block}
+.cross::before,.cross::after{content:'';position:absolute;background:var(--fg-faint)}
+.cross::before{left:0;right:0;top:5.5px;height:1px}
+.cross::after{top:0;bottom:0;left:5.5px;width:1px}
+
+/* ════════════════════════════════════════════════════════
+   패널
+   ════════════════════════════════════════════════════════ */
+.panel{min-height:100svh;position:relative;z-index:2;scroll-snap-align:start;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:calc(clamp(74px,11vh,116px) + var(--sat)) var(--pad) calc(clamp(60px,9vh,92px) + var(--sab));
+  max-width:var(--maxw);margin:0 auto;overflow:hidden}
+.panel.tall{min-height:auto;justify-content:flex-start;scroll-snap-align:none}
+@media(max-width:760px){
+  .panel{min-height:auto;padding-top:calc(84px + var(--sat));padding-bottom:calc(64px + var(--sab));scroll-snap-align:none}
+  html{scroll-snap-type:none}
+}
+
+.ch-ghost{position:absolute;z-index:0;pointer-events:none;user-select:none;
+  font-family:var(--f-nem);font-size:clamp(150px,32vw,500px);line-height:.75;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.045);
+  right:-.06em;top:50%;transform:translateY(-50%)}
+
+.an{opacity:0;transform:translateY(26px);filter:blur(4px);
+  transition:opacity .85s cubic-bezier(.16,.84,.28,1),transform .85s cubic-bezier(.16,.84,.28,1),filter .85s}
+.panel.active .an{opacity:1;transform:none;filter:none;transition-delay:calc(var(--i,0)*85ms)}
+.an-x{opacity:0;transform:translateX(-32px);transition:opacity .9s cubic-bezier(.16,.84,.28,1),transform .9s cubic-bezier(.16,.84,.28,1)}
+.panel.active .an-x{opacity:1;transform:none;transition-delay:calc(var(--i,0)*85ms)}
+.an-img{opacity:0;clip-path:inset(-40px -40px 100% -40px);transition:opacity .2s linear,clip-path 1.1s cubic-bezier(.72,0,.18,1)}
+.panel.active .an-img{opacity:1;clip-path:inset(-40px);transition-delay:calc(var(--i,0)*85ms)}
+@media(prefers-reduced-motion:reduce){.an,.an-x,.an-img{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}}
+
+.glitch{position:relative;display:inline-block}
+.panel.active .glitch{animation:gl .6s steps(2) 1}
+@keyframes gl{0%{text-shadow:3px 0 var(--red),-3px 0 #26e0ff;transform:translateX(2px)}
+  30%{text-shadow:-4px 0 var(--red),4px 0 #26e0ff;transform:translateX(-3px)}
+  60%{text-shadow:2px 0 var(--red),-2px 0 #26e0ff;transform:translateX(1px)}
+  100%{text-shadow:none;transform:none}}
+
+/* ════════════════════════════════════════════════════════
+   고정 HUD
+   ════════════════════════════════════════════════════════ */
+.prog{position:fixed;left:0;top:0;height:2px;background:var(--red);z-index:400;width:0;transition:width .12s linear}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:300;padding-top:var(--sat);
+  background:linear-gradient(to bottom,rgba(8,8,10,.96),rgba(8,8,10,.55) 68%,transparent);
+  border-bottom:1px solid var(--line-soft);backdrop-filter:blur(8px)}
+.topbar-in{max-width:var(--maxw);margin:0 auto;padding:10px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .mk{width:18px;height:18px;border:1px solid var(--red);border-radius:50%;position:relative;flex:none}
+.brand .mk::before,.brand .mk::after{content:'';position:absolute;background:var(--red)}
+.brand .mk::before{left:-3px;right:-3px;top:8.5px;height:1px}
+.brand .mk::after{top:-3px;bottom:-3px;left:8.5px;width:1px}
+.brand b{font-family:var(--f-nem);font-size:15px;letter-spacing:.06em}
+.brand small{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.2em;color:var(--fg-faint);text-transform:uppercase;white-space:nowrap}
+.tb-r{display:flex;align-items:center;gap:12px}
+.tb-now{font-family:var(--f-mono);font-size:9px;letter-spacing:.2em;color:var(--fg-dim);text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.tb-now b{color:var(--red);font-weight:400}
+.tb-btn{border:1px solid var(--red);color:var(--red);padding:7px 13px;font-family:var(--f-mono);
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;transition:.2s;white-space:nowrap;min-height:34px}
+.tb-btn:hover{background:var(--red);color:#fff}
+@media(max-width:900px){.brand small{display:none}.tb-now{display:none}}
+@media(max-width:420px){.tb-btn{padding:7px 10px;font-size:8.5px}}
+
+/* 우측 챕터 내비 (데스크톱) */
+.chapnav{position:fixed;right:calc(var(--pad)*.42);top:50%;transform:translateY(-50%);z-index:280;
+  display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+.chapnav a{display:flex;align-items:center;gap:9px;justify-content:flex-end;opacity:.42;transition:.28s;padding:3px 0}
+.chapnav a .t{font-family:var(--f-mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .35s,opacity .3s;opacity:0}
+.chapnav a .d{width:16px;height:1px;background:var(--fg);transition:.28s;flex:none}
+.chapnav a:hover,.chapnav a.on{opacity:1}
+.chapnav a.on .d{background:var(--red);width:30px;height:2px}
+.chapnav a:hover .t{max-width:150px;opacity:1}
+@media(max-width:900px){.chapnav{display:none}}
+
+/* 하단 챕터 바 (모바일) */
+.chapbar{display:none}
+@media(max-width:900px){
+  .chapbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:290;
+    padding:9px 12px calc(9px + var(--sab));gap:7px;overflow-x:auto;scrollbar-width:none;
+    background:linear-gradient(to top,rgba(8,8,10,.97),rgba(8,8,10,.75));
+    border-top:1px solid var(--line-soft);backdrop-filter:blur(8px)}
+  .chapbar::-webkit-scrollbar{display:none}
+  .chapbar a{flex:none;border:1px solid var(--line);padding:7px 11px;font-family:var(--f-mono);
+    font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);
+    display:flex;align-items:center;gap:6px;min-height:32px;white-space:nowrap}
+  .chapbar a b{color:var(--fg-faint);font-weight:400}
+  .chapbar a.on{border-color:var(--red);color:var(--red);background:rgba(200,16,46,.12)}
+  .chapbar a.on b{color:var(--red)}
+}
+
+.rail{position:fixed;left:calc(var(--pad)*.28);top:0;bottom:0;z-index:270;pointer-events:none;display:flex;align-items:center}
+.rail span{font-family:var(--f-mono);font-size:8px;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(255,255,255,.17);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+@media(max-width:1100px){.rail{display:none}}
+
+.hint{position:absolute;bottom:20px;left:var(--pad);display:flex;align-items:center;gap:11px;z-index:5}
+.hint .bar{width:1px;height:32px;background:linear-gradient(to bottom,var(--red),transparent);animation:hb 1.9s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+@media(max-width:760px){.hint{display:none}}
+
+/* ════════════════════════════════════════════════════════
+   이미지 슬롯
+   ════════════════════════════════════════════════════════ */
+.ph{position:relative;overflow:hidden;background:#0b0b0e}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .fb{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;
+  border:1px dashed rgba(200,16,46,.6);
+  background:repeating-linear-gradient(135deg,rgba(200,16,46,.06) 0 6px,transparent 6px 13px);
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,110,124,.85);text-align:center;padding:14px}
+.ph .fb::before,.ph .fb::after{content:'';position:absolute;background:rgba(200,16,46,.4)}
+.ph .fb::before{left:0;right:0;top:50%;height:1px}
+.ph .fb::after{top:0;bottom:0;left:50%;width:1px}
+.ph .fb b{position:relative;z-index:2;background:#0b0b0e;border:1px solid rgba(200,16,46,.45);padding:6px 10px;font-weight:400}
+.ph .fb i{position:relative;z-index:2;font-style:normal;color:rgba(255,255,255,.35);font-size:8px}
+.ph.miss img{display:none}
+.ph.miss .fb{display:flex}
+
+.slot{border:1px dashed rgba(200,16,46,.55);
+  background:repeating-linear-gradient(135deg,rgba(200,16,46,.05) 0 6px,transparent 6px 13px);
+  color:rgba(255,110,124,.8);font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;padding:13px 15px;line-height:1.9}
+
+/* ── 로고 플레이트 (검정 로고를 흰 판 위에) ── */
+.plate{background:#f2f2f0;padding:clamp(14px,2.6vw,30px);position:relative}
+.plate .ph{background:transparent;aspect-ratio:2122/1085}
+.plate .ph img{object-fit:contain}
+.plate .ph .fb{background:repeating-linear-gradient(135deg,rgba(200,16,46,.1) 0 6px,transparent 6px 13px);color:#a8102a}
+.plate .ph .fb b{background:#f2f2f0;color:#a8102a}
+.plate .ph .fb i{color:rgba(0,0,0,.4)}
+.plate::before,.plate::after{content:'';position:absolute;width:12px;height:12px;border:1px solid var(--red)}
+.plate::before{top:-5px;left:-5px;border-right:0;border-bottom:0}
+.plate::after{bottom:-5px;right:-5px;border-left:0;border-top:0}
+.plate-tag{position:absolute;top:-1px;left:-1px;background:var(--red);color:#fff;
+  font-family:var(--f-mono);font-size:8px;letter-spacing:.2em;padding:4px 9px;text-transform:uppercase}
+
+/* ════════════════════════════════════════════════════════
+   CH 00 — OVERTURE
+   ════════════════════════════════════════════════════════ */
+.ov{align-items:center;text-align:center;justify-content:center}
+/* 메인 이미지 프레임 */
+.ov-visual{width:min(88vw,470px);border:1px solid var(--red);padding:6px;position:relative}
+.ov-visual .ph{aspect-ratio:16/9}
+.ov-visual::before,.ov-visual::after{content:'';position:absolute;width:14px;height:14px;border:1px solid var(--red)}
+.ov-visual::before{top:-6px;left:-6px;border-right:0;border-bottom:0}
+.ov-visual::after{bottom:-6px;right:-6px;border-left:0;border-top:0}
+.ov-visual .vtag{position:absolute;top:-9px;left:16px;background:var(--bg);padding:0 9px;z-index:6;
+  font-family:var(--f-mono);font-size:8.5px;letter-spacing:.2em;color:var(--red);text-transform:uppercase;line-height:1.9}
+.ov-title{font-family:var(--f-classic);font-weight:400;font-size:clamp(30px,5.4vw,66px);
+  letter-spacing:.26em;line-height:1.05;margin-top:20px;text-indent:.26em;
+  background:linear-gradient(180deg,#fff,#d5d5db 50%,#84848d);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* 화려한 영어 필기체 부제 */
+.ov-sub{font-family:var(--f-script);font-size:clamp(21px,3.3vw,40px);line-height:1.1;
+  color:var(--red);margin-top:0;letter-spacing:.01em;
+  text-shadow:0 0 34px rgba(200,16,46,.35)}
+.ov-kr{font-size:11px;letter-spacing:.42em;color:var(--fg-faint);margin-top:8px}
+.ov-line{display:flex;align-items:center;gap:14px;justify-content:center;margin-top:18px;width:min(92vw,700px)}
+.ov-names{display:flex;align-items:center;gap:clamp(14px,4vw,50px);margin-top:22px;flex-wrap:wrap;justify-content:center}
+.ov-names .nm{font-family:var(--f-nem);font-size:clamp(26px,4.4vw,54px);line-height:1;letter-spacing:.03em}
+.ov-names .nm.a{background:linear-gradient(180deg,#fff,#c9c9cf 55%,#75757d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ov-names .nm.b{color:transparent;-webkit-text-stroke:1.2px var(--red)}
+.ov-names .vs{font-family:var(--f-mono);font-size:11px;letter-spacing:.3em;color:var(--red)}
+.ov-names .rk{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.2em;color:var(--fg-faint);margin-top:7px;text-transform:uppercase}
+.ov-tags{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.ov-tags span{border:1px solid var(--line);padding:6px 12px;font-family:var(--f-mono);font-size:9px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
+.ov-tags span.hot{border-color:var(--red);color:var(--red)}
+
+/* 첫 화면 CTA — 성향표 / 배려 리스트 */
+.cta{display:flex;gap:11px;margin-top:22px;flex-wrap:wrap;justify-content:center;width:100%}
+.cta button{
+  position:relative;border:1px solid var(--red);background:rgba(200,16,46,.09);
+  padding:13px 22px;min-width:min(100%,224px);min-height:52px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;transition:.25s;overflow:hidden;
+}
+.cta button::after{content:'';position:absolute;inset:0;background:var(--red);
+  transform:translateX(-101%);transition:transform .38s cubic-bezier(.72,0,.18,1);z-index:0}
+.cta button:hover::after,.cta button:focus-visible::after{transform:translateX(0)}
+.cta button>*{position:relative;z-index:1;transition:color .25s}
+.cta button .l .en,.cta button .l .kr,.cta button .ar{transition:color .25s}
+.cta button:hover .l .en,.cta button:focus-visible .l .en,
+.cta button:hover .l .kr,.cta button:focus-visible .l .kr,
+.cta button:hover .ar,.cta button:focus-visible .ar{color:#fff}
+.cta .l{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.cta .l .en{font-family:var(--f-nem);font-size:16px;letter-spacing:.1em;color:var(--red)}
+.cta .l .kr{font-size:11.5px;letter-spacing:.16em;color:var(--fg-dim)}
+.cta .ar{font-family:var(--f-mono);font-size:13px;color:var(--red)}
+/* 규칙 바로가기 */
+.quick{display:inline-flex;align-items:center;gap:12px;margin-top:15px;padding:10px 18px;
+  border:1px solid var(--line);transition:.24s;min-height:44px;flex-wrap:wrap;justify-content:center}
+.quick:hover{border-color:var(--red);background:rgba(200,16,46,.08)}
+.quick .qk{font-family:var(--f-classic);font-size:13.5px;color:var(--fg);letter-spacing:.06em}
+.quick .qe{color:var(--fg-faint);font-size:8.5px}
+.quick .qa{font-family:var(--f-mono);font-size:12px;color:var(--red)}
+.quick:hover .qe{color:var(--red)}
+
+@media(max-width:560px){
+  .cta{flex-direction:column}.cta button{min-width:0;width:100%}
+  .quick{width:100%}
+  .ov-names{flex-direction:column;gap:14px}
+  .ov-names .vs{transform:rotate(90deg)}
+  .ov-plate{width:100%}
+}
+
+/* ════════════════════════════════════════════════════════
+   섹션 헤더
+   ════════════════════════════════════════════════════════ */
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px;position:relative;z-index:3}
+.sec-head .idx{font-family:var(--f-mono);font-size:10px;letter-spacing:.24em;color:var(--red);display:block;margin-bottom:11px}
+.sec-head h2{font-family:var(--f-nem);font-size:clamp(30px,6.2vw,84px);line-height:.95;letter-spacing:.02em}
+.sec-head h2 em{font-style:normal;color:transparent;-webkit-text-stroke:1.1px var(--red)}
+.sec-head .kr{font-size:11.5px;letter-spacing:.24em;color:var(--fg-dim);margin-top:13px;display:block}
+.sec-head-r{text-align:right;max-width:340px}
+@media(max-width:700px){.sec-head-r{text-align:left;max-width:none}}
+
+/* ════════════════════════════════════════════════════════
+   CH 01 — DOSSIER
+   ════════════════════════════════════════════════════════ */
+.dos-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(20px,3.4vw,54px);align-items:center;position:relative;z-index:3}
+@media(max-width:940px){.dos-grid{grid-template-columns:1fr;gap:28px}}
+.phrase{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.phrase div{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line-soft)}
+.phrase .h{font-family:var(--f-nem);font-size:15px;color:var(--red);flex:none;letter-spacing:.06em}
+/* 목차 1·2·3 아래 문구 — 클래식 명조 (한글 + 영문) */
+.phrase .t{font-family:var(--f-classic);font-size:clamp(15px,1.5vw,19px);color:var(--fg);
+  font-weight:500;letter-spacing:.02em;line-height:1.4}
+.phrase .te{font-family:var(--f-classic);font-style:italic;font-size:11.5px;color:var(--fg-faint);
+  letter-spacing:.06em;display:block;margin-top:3px;font-weight:400}
+.dos-meta{display:flex;flex-direction:column;gap:9px;margin-top:22px}
+.mrow{display:flex;align-items:center;gap:12px}
+.mrow .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;color:var(--fg-faint);width:96px;flex:none;text-transform:uppercase}
+.mrow .l{flex:1;height:1px;background:var(--line)}
+.mrow .v{font-family:var(--f-classic);font-weight:500;font-size:clamp(13px,1.25vw,16px);
+  letter-spacing:.08em;color:var(--fg);text-align:right;line-height:1.45}
+.mrow .v.kr{font-family:var(--f-classic);font-size:clamp(12.5px,1.15vw,15px);letter-spacing:.04em}
+@media(max-width:520px){.mrow .k{width:74px}.mrow .v{font-size:11.5px}}
+
+.catch{margin-top:20px;border:1px solid var(--red);background:rgba(200,16,46,.07);padding:15px 17px;
+  display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.catch .lat{font-family:var(--f-script);font-style:normal;font-size:clamp(30px,4.4vw,54px);
+  color:var(--red-hot);line-height:1.15;letter-spacing:.01em;text-shadow:0 0 28px rgba(255,33,55,.3)}
+.catch .tr{font-size:12px;color:var(--fg-dim);letter-spacing:.03em;line-height:1.85}
+.catch .lbl{font-family:var(--f-mono);font-size:8px;letter-spacing:.22em;color:var(--fg-faint);width:100%;text-transform:uppercase}
+
+/* ════════════════════════════════════════════════════════
+   CH 02 / 03 — SUBJECT
+   ════════════════════════════════════════════════════════ */
+.subj{display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(20px,3.4vw,56px);align-items:center;position:relative;z-index:3}
+.subj.rev{grid-template-columns:1.18fr .82fr}
+@media(max-width:960px){.subj,.subj.rev{grid-template-columns:1fr;gap:24px}.subj .col-img{order:-1}}
+
+.portrait{position:relative;border:1px solid var(--line);padding:7px;
+  width:min(100%,calc(66svh*832/1216));margin-inline:auto}
+.portrait .ph{aspect-ratio:832/1216;width:100%}
+.portrait .ph img{filter:grayscale(.35) contrast(1.08)}
+.portrait.a .ph img{filter:grayscale(.12) contrast(1.1) saturate(1.18)}
+.portrait::before{content:attr(data-code);position:absolute;top:-10px;left:14px;background:var(--bg);
+  padding:0 9px;font-family:var(--f-nem);font-size:12px;color:var(--red);letter-spacing:.12em;z-index:5;line-height:1.6}
+.portrait .tagline{position:absolute;bottom:-10px;right:14px;background:var(--bg);padding:0 9px;
+  font-family:var(--f-mono);font-size:8.5px;letter-spacing:.2em;color:var(--fg-faint);z-index:5;text-transform:uppercase;line-height:1.9}
+.portrait .ovl{position:absolute;inset:7px;pointer-events:none;z-index:3;
+  background:linear-gradient(to top,rgba(8,8,10,.88),transparent 40%)}
+.portrait .hud{position:absolute;left:18px;bottom:18px;z-index:4;display:flex;flex-direction:column;gap:4px}
+.portrait .hud span{font-family:var(--f-mono);font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.55);text-transform:uppercase}
+@media(max-width:960px){.portrait{width:min(100%,340px)}}
+
+.subj-head{margin-bottom:20px}
+.subj-code{font-family:var(--f-nem);font-size:clamp(44px,9.5vw,132px);line-height:.86;letter-spacing:.02em}
+.subj-code.a{background:linear-gradient(180deg,#fff,#cfcfd6 50%,#7c7c85);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subj-code.b{color:transparent;-webkit-text-stroke:clamp(1px,.13vw,2px) var(--red)}
+.subj-epi{font-family:var(--f-nem);font-size:clamp(14px,2.1vw,25px);letter-spacing:.16em;color:var(--red);margin-top:7px}
+.subj-krn{font-size:12px;letter-spacing:.28em;color:var(--fg-dim);margin-top:9px}
+
+/* ── FEARLESS 스펙 시트 ── */
+.spec{border:1px solid var(--line);background:var(--panel);margin-bottom:20px;position:relative}
+.spec-hd{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);
+  background:rgba(200,16,46,.09);flex-wrap:wrap}
+.spec-hd .org{font-family:var(--f-nem);font-size:11px;letter-spacing:.16em;color:var(--red)}
+.spec-hd .l{flex:1;height:1px;background:rgba(200,16,46,.3);min-width:20px}
+.spec-hd .cd{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;color:var(--fg)}
+.spec-bd{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-soft)}
+@media(max-width:640px){.spec-bd{grid-template-columns:1fr 1fr}}
+.spec-cell{background:var(--panel);padding:11px 13px;display:flex;flex-direction:column;gap:4px}
+.spec-cell .k{font-family:var(--f-mono);font-size:8px;letter-spacing:.2em;color:var(--fg-faint);text-transform:uppercase}
+.spec-cell .v{font-size:12.5px;color:var(--fg);font-weight:400;letter-spacing:-.01em}
+.spec-cell .v.en{font-family:var(--f-nem);font-size:14px;letter-spacing:.08em}
+.rankbadge{display:inline-flex;align-items:center;gap:6px}
+.rankbadge b{font-family:var(--f-nem);font-size:17px;line-height:1;color:var(--red);letter-spacing:.06em}
+.rankbadge span{font-family:var(--f-mono);font-size:8px;letter-spacing:.18em;color:var(--fg-faint)}
+
+.ability{border:1px solid var(--red);background:rgba(200,16,46,.06);padding:13px 15px;
+  display:flex;flex-direction:column;gap:7px;margin-top:1px}
+.ability .top{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.ability .nmk{font-size:16px;font-weight:500;color:var(--fg);letter-spacing:.04em}
+.ability .nen{font-family:var(--f-nem);font-size:12px;letter-spacing:.18em;color:var(--red)}
+.ability p{font-size:12.5px;line-height:1.8;color:var(--fg-dim)}
+.ability .meter{display:flex;align-items:center;gap:9px;margin-top:2px}
+.ability .meter .lb{font-family:var(--f-mono);font-size:8px;letter-spacing:.18em;color:var(--fg-faint);text-transform:uppercase;flex:none}
+.ability .meter .track{flex:1;height:4px;background:rgba(255,255,255,.08);position:relative;overflow:hidden}
+.ability .meter .track i{position:absolute;inset:0 auto 0 0;background:var(--red);width:0;transition:width 1.3s cubic-bezier(.2,.7,.2,1) .3s}
+.panel.active .ability .meter .track i{width:var(--w,80%)}
+.ability .meter .vl{font-family:var(--f-mono);font-size:9px;color:var(--red);flex:none}
+
+.traits{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.trait{padding:14px 0;border-bottom:1px solid var(--line-soft);display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start}
+@media(max-width:660px){.trait{grid-template-columns:1fr;gap:5px}}
+.trait .th{display:flex;flex-direction:column;gap:3px}
+.trait .th b{font-size:12.5px;font-weight:500;color:var(--fg);letter-spacing:-.01em}
+.trait .th span{font-family:var(--f-mono);font-size:8px;letter-spacing:.16em;color:var(--fg-faint);text-transform:uppercase}
+.trait p{font-size:12.5px;line-height:1.85;color:var(--fg-dim)}
+
+/* ════════════════════════════════════════════════════════
+   CH 04 — DYNAMIC
+   ════════════════════════════════════════════════════════ */
+.dyn-top{display:flex;align-items:center;gap:clamp(10px,3vw,40px);justify-content:center;margin:4px 0 30px;position:relative;z-index:3;flex-wrap:wrap}
+.dyn-node{text-align:center}
+.dyn-node .c{font-family:var(--f-nem);font-size:clamp(26px,5.6vw,70px);line-height:1;letter-spacing:.03em}
+.dyn-node .c.a{background:linear-gradient(180deg,#fff,#c9c9cf 55%,#75757d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dyn-node .c.b{color:transparent;-webkit-text-stroke:1.2px var(--red)}
+.dyn-node .e{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.18em;color:var(--fg-faint);margin-top:7px;text-transform:uppercase}
+.dyn-link{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:clamp(76px,15vw,210px)}
+.dyn-link .ar{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--red),transparent);position:relative}
+.dyn-link .ar::before,.dyn-link .ar::after{content:'';position:absolute;top:-3px;width:7px;height:7px;border-top:1px solid var(--red);border-right:1px solid var(--red)}
+.dyn-link .ar::before{right:0;transform:rotate(45deg)}
+.dyn-link .ar::after{left:0;transform:rotate(-135deg)}
+.dyn-link .lbl{font-family:var(--f-script);font-size:clamp(28px,4.4vw,54px);color:var(--red);
+  letter-spacing:.01em;line-height:1.1;text-shadow:0 0 26px rgba(200,16,46,.4);text-transform:none}
+.dyn-link .kr{font-family:var(--f-mono);font-size:8px;letter-spacing:.18em;color:var(--fg-faint)}
+
+.dyn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);position:relative;z-index:3}
+@media(max-width:880px){.dyn-grid{grid-template-columns:1fr}}
+.dyn-card{background:var(--panel);padding:clamp(16px,2.3vw,26px);display:flex;flex-direction:column;gap:10px;position:relative;min-height:190px}
+.dyn-card .n{position:absolute;top:13px;right:15px;font-family:var(--f-nem);font-size:25px;color:rgba(255,255,255,.08)}
+.dyn-card h4{font-family:var(--f-nem);font-size:14px;letter-spacing:.1em;color:var(--red)}
+.dyn-card .kt{font-size:13px;font-weight:500;color:var(--fg)}
+.dyn-card p{font-size:12.5px;line-height:1.85;color:var(--fg-dim)}
+.dyn-card.wide{grid-column:1/-1;min-height:0}
+.dyn-quote{margin-top:24px;text-align:center;position:relative;z-index:3}
+.dyn-quote .serif-i{font-size:clamp(15px,2.4vw,29px);line-height:1.4;color:var(--fg)}
+.dyn-quote .serif-i b{color:var(--red-hot);font-weight:400}
+
+/* ════════════════════════════════════════════════════════
+   CH 05 — CHRONICLE (서사)
+   ════════════════════════════════════════════════════════ */
+.chron{position:relative;z-index:3;padding-left:0}
+.chron::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--line) 6%,var(--line) 94%,transparent);transform:translateX(-.5px)}
+.step{display:grid;grid-template-columns:1fr 74px 1fr;align-items:center;position:relative}
+.step .node{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:2;padding:14px 0}
+.step .node .dot{width:11px;height:11px;border:1px solid var(--red);background:var(--bg);position:relative;transform:rotate(45deg);flex:none}
+.step .node .dot::after{content:'';position:absolute;inset:2.5px;background:var(--red);opacity:0;transition:opacity .5s}
+.step.on .node .dot::after{opacity:1}
+.step .node .ph-n{font-family:var(--f-nem);font-size:11px;color:var(--fg-faint);letter-spacing:.1em}
+.step.on .node .ph-n{color:var(--red)}
+.step .box{padding:16px 0}
+.step .card{border:1px solid var(--line);background:var(--panel);padding:15px 17px;position:relative;transition:.35s}
+.step.on .card{border-color:rgba(200,16,46,.5)}
+.step .card .tag{font-family:var(--f-nem);font-size:11px;letter-spacing:.16em;color:var(--red);display:block;margin-bottom:7px}
+.step .card .ttl{font-size:13.5px;font-weight:500;color:var(--fg);letter-spacing:-.01em;margin-bottom:6px}
+.step .card p{font-size:12.5px;line-height:1.85;color:var(--fg-dim)}
+.step .card .who{font-family:var(--f-mono);font-size:8px;letter-spacing:.18em;color:var(--fg-faint);
+  text-transform:uppercase;margin-top:9px;display:flex;align-items:center;gap:7px}
+.step .card .who i{width:5px;height:5px;background:var(--red);font-style:normal;flex:none}
+.step:nth-child(odd) .box:last-child,.step:nth-child(even) .box:first-child{visibility:hidden}
+.step:nth-child(odd) .box:first-child{padding-right:26px}
+.step:nth-child(even) .box:last-child{padding-left:26px}
+.step:nth-child(odd) .card{text-align:right}
+.step:nth-child(odd) .card .who{justify-content:flex-end}
+.chron-end{display:flex;align-items:center;gap:14px;justify-content:center;margin-top:24px;position:relative;z-index:3}
+@media(max-width:820px){
+  .chron::before{left:7px;transform:none}
+  .step{grid-template-columns:15px minmax(0,1fr);gap:0 16px;align-items:start}
+  /* 왼쪽 = 노드, 오른쪽 = 카드 한 장만 */
+  .step .node{grid-column:1;grid-row:1;padding:20px 0 0;gap:0}
+  .step .node .ph-n{display:none}
+  .step .box{grid-column:2;grid-row:1;padding:12px 0;visibility:visible!important}
+  .step:nth-child(odd) .box:last-child{display:none}
+  .step:nth-child(even) .box:first-child{display:none}
+  .step:nth-child(odd) .box:first-child{padding-right:0}
+  .step:nth-child(even) .box:last-child{padding-left:0}
+  .step:nth-child(odd) .card{text-align:left}
+  .step:nth-child(odd) .card .who{justify-content:flex-start}
+  .step .card{padding-top:19px}
+  .step .card::before{content:attr(data-ph);position:absolute;top:-8px;right:12px;background:var(--panel);
+    padding:0 7px;font-family:var(--f-nem);font-size:10px;color:var(--red);letter-spacing:.1em}
+}
+
+/* ════════════════════════════════════════════════════════
+   CH 06 — GALLERY
+   ════════════════════════════════════════════════════════ */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:clamp(10px,1.4vw,18px);position:relative;z-index:3}
+@media(max-width:520px){.gal{grid-template-columns:1fr 1fr;gap:9px}}
+.gal .cell{border:1px solid var(--line);padding:6px;background:var(--panel);transition:.28s;position:relative}
+.gal .cell:hover{border-color:var(--red);transform:translateY(-3px)}
+.gal .ph{aspect-ratio:3/4}
+.gal .cap{display:flex;justify-content:space-between;padding:8px 3px 2px}
+.gal .cap span{font-family:var(--f-mono);font-size:8px;letter-spacing:.14em;color:var(--fg-faint);text-transform:uppercase}
+.gal .cap span:last-child{color:var(--red)}
+
+.lightbox{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:var(--pad)}
+.lightbox.open{display:flex}
+.lightbox .bd{position:absolute;inset:0;background:rgba(4,4,6,.94);backdrop-filter:blur(8px)}
+.lightbox figure{position:relative;z-index:2;max-width:min(94vw,880px);min-width:min(94vw,520px);
+  max-height:86svh;border:1px solid var(--red);padding:7px;background:var(--bg-1);
+  display:flex;flex-direction:column;align-items:center}
+.lightbox img{max-width:100%;max-height:calc(86svh - 72px);width:auto;object-fit:contain}
+.lightbox figcaption{display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:10px 4px 2px;flex-wrap:wrap;width:100%}
+.lb-l{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:9.5px;
+  letter-spacing:.16em;color:var(--fg-faint);text-transform:uppercase}
+.lb-l b{color:var(--red);font-weight:400}
+.lb-art{display:flex;align-items:center;gap:9px;flex:1;min-width:200px;justify-content:flex-end}
+.lb-art .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.2em;color:var(--red);
+  text-transform:uppercase;flex:none}
+.lb-art input{flex:1;max-width:340px;background:#08080a;border:1px solid var(--line);color:var(--fg);
+  font-family:var(--f-kr);font-size:12px;letter-spacing:.02em;padding:8px 11px;min-height:34px}
+.lb-art input::placeholder{color:var(--fg-faint);font-size:11px}
+.lb-art input:focus{outline:none;border-color:var(--red)}
+.lightbox .cl{position:absolute;top:-40px;right:0;width:34px;height:34px;border:1px solid var(--line);display:grid;place-items:center;color:var(--fg-dim);z-index:3}
+.lightbox .cl:hover{border-color:var(--red);color:var(--red)}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:60px;
+  border:1px solid var(--line);background:rgba(8,8,10,.75);display:grid;place-items:center;
+  color:var(--fg-dim);font-family:var(--f-mono);font-size:15px;z-index:4;transition:.2s}
+.lb-nav:hover{border-color:var(--red);color:var(--red);background:rgba(200,16,46,.14)}
+.lb-nav.prev{left:-52px}
+.lb-nav.next{right:-52px}
+@media(max-width:900px){
+  .lb-nav.prev{left:6px}.lb-nav.next{right:6px}
+  .lb-art{justify-content:flex-start}
+  .lightbox .cl{top:-38px}
+}
+/* 갤러리 카드 크레딧 */
+.gal .art{display:block;padding:3px 3px 0;font-family:var(--f-kr);font-size:10.5px;
+  letter-spacing:.01em;color:var(--red);font-weight:400;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gal .art:empty{display:none}
+
+/* ════════════════════════════════════════════════════════
+   CH 07 — RULES / CONTACT
+   ════════════════════════════════════════════════════════ */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);position:relative;z-index:3}
+.rule-card{background:var(--panel);padding:clamp(16px,2.3vw,25px);display:flex;flex-direction:column;gap:10px;min-height:170px;position:relative}
+.rule-card .n{position:absolute;top:12px;right:14px;font-family:var(--f-nem);font-size:27px;color:rgba(255,255,255,.08)}
+.rule-card h4{font-family:var(--f-nem);font-size:13px;letter-spacing:.12em;color:var(--red)}
+.rule-card .kt{font-size:13px;font-weight:500;color:var(--fg)}
+.rule-card p{font-size:12.5px;line-height:1.85;color:var(--fg-dim)}
+.warn{border:1px solid var(--red);background:rgba(200,16,46,.08);padding:15px 17px;display:flex;gap:15px;align-items:flex-start;margin-top:18px;position:relative;z-index:3}
+.warn .ico{font-family:var(--f-nem);font-size:21px;color:var(--red);line-height:1;flex:none}
+.warn>div:last-child{flex:1}
+
+.foot{border-top:1px solid var(--line);margin-top:auto;padding-top:clamp(24px,4vh,40px);position:relative;z-index:3}
+.foot-top{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:clamp(20px,3vw,48px);padding-bottom:24px}
+@media(max-width:820px){.foot-top{grid-template-columns:1fr;gap:24px}}
+.foot-big{font-family:var(--f-nem);font-size:clamp(32px,7.2vw,92px);line-height:.9;letter-spacing:.03em;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.2)}
+.foot-col>.mono{color:var(--fg-faint);display:block;margin-bottom:12px}
+.foot-links{display:flex;flex-direction:column;gap:8px}
+.foot-links a,.foot-links .li{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;color:var(--fg-dim);
+  text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:.18s}
+.foot-links a:hover{color:var(--red)}
+.lnk{display:flex;align-items:center;gap:11px;border:1px solid var(--line);padding:11px 13px;
+  transition:.22s;min-height:44px;text-transform:none!important;letter-spacing:.02em!important}
+.lnk:hover{border-color:var(--red);background:rgba(200,16,46,.08)}
+.lnk.hot{border-color:var(--red-deep);background:rgba(200,16,46,.07)}
+.lnk .en{font-family:var(--f-nem);font-size:11px;letter-spacing:.14em;color:var(--red);flex:none}
+.lnk .kr{font-family:var(--f-kr);font-size:12px;color:var(--fg);flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lnk .ar{font-family:var(--f-mono);font-size:11px;color:var(--fg-faint);flex:none}
+.lnk:hover .ar{color:var(--red)}
+.lnk.empty{border-style:dashed;border-color:rgba(200,16,46,.45);
+  background:repeating-linear-gradient(135deg,rgba(200,16,46,.05) 0 6px,transparent 6px 13px)}
+.lnk.empty .kr{color:rgba(255,110,124,.8);font-family:var(--f-mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase}
+.inf{display:flex;flex-direction:column;gap:4px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.inf:last-child{border-bottom:0}
+.inf .k{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.2em;color:var(--fg-faint);text-transform:uppercase}
+.inf .v{font-family:var(--f-kr);font-size:12.5px;color:var(--fg);letter-spacing:.02em;text-transform:none}
+.inf .v.empty{color:rgba(255,110,124,.75);font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+.foot-bar{border-top:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+@media(max-width:900px){.foot-bar{padding-bottom:72px}}
+
+/* ════════════════════════════════════════════════════════
+   SHEET — 성향표 / 배려 리스트 오버레이
+   ════════════════════════════════════════════════════════ */
+.sheet{position:fixed;inset:0;z-index:700;display:none}
+.sheet.open{display:block}
+.sheet .bd{position:absolute;inset:0;background:rgba(4,4,6,.9);backdrop-filter:blur(9px);animation:fade .3s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet-in{position:relative;z-index:2;max-width:1180px;height:100%;margin:0 auto;
+  padding:calc(14px + var(--sat)) var(--pad) calc(14px + var(--sab));display:flex;flex-direction:column}
+.sheet-box{background:var(--bg-1);border:1px solid var(--red);flex:1;min-height:0;display:flex;flex-direction:column;
+  animation:pop .34s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.99)}to{opacity:1;transform:none}}
+.sheet-hd{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap}
+.sheet-hd .ttl{font-family:var(--f-nem);font-size:15px;letter-spacing:.12em;color:var(--red)}
+.sheet-hd .l{flex:1;height:1px;background:var(--line);min-width:12px}
+.sheet-cl{width:34px;height:34px;border:1px solid var(--line);display:grid;place-items:center;color:var(--fg-dim);transition:.18s;flex:none}
+.sheet-cl:hover{border-color:var(--red);color:var(--red)}
+.sheet-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}
+.sheet-tabs::-webkit-scrollbar{display:none}
+.sheet-tabs button{flex:1;min-width:150px;padding:13px 16px;display:flex;flex-direction:column;gap:3px;align-items:flex-start;
+  border-right:1px solid var(--line);transition:.2s;position:relative;min-height:56px}
+.sheet-tabs button:last-child{border-right:0}
+.sheet-tabs button .en{font-family:var(--f-nem);font-size:13px;letter-spacing:.12em;color:var(--fg-faint)}
+.sheet-tabs button .kr{font-size:10.5px;letter-spacing:.14em;color:var(--fg-faint)}
+.sheet-tabs button.on{background:rgba(200,16,46,.1)}
+.sheet-tabs button.on .en{color:var(--red)}
+.sheet-tabs button.on .kr{color:var(--fg-dim)}
+.sheet-tabs button.on::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--red)}
+.sheet-tabs button:hover{background:rgba(255,255,255,.06)}
+.sheet-tabs button:hover .en,.sheet-tabs button:hover .kr{color:#fff}
+.sheet-tabs button.on:hover .en,.sheet-tabs button.on:hover .kr{color:#fff}
+/* 상단 고정 버튼도 동일 */
+.tb-btn:hover,.tb-btn:focus-visible{background:var(--red);color:#fff}
+.sheet-bd{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:clamp(14px,2.2vw,24px)}
+.sheet-pane{display:none}
+.sheet-pane.on{display:block}
+.sheet-ft{flex:none;border-top:1px solid var(--line);padding:10px 14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ── 성향표 상단 선언문 ── */
+.stmt{border:1px solid var(--red);background:rgba(200,16,46,.09);padding:clamp(14px,2vw,22px);margin-bottom:18px;position:relative;overflow:hidden}
+.stmt::after{content:'';position:absolute;top:0;right:0;bottom:0;width:38%;pointer-events:none;
+  background:repeating-linear-gradient(135deg,rgba(200,16,46,.16) 0 7px,transparent 7px 15px);
+  -webkit-mask-image:linear-gradient(to left,#000,transparent);mask-image:linear-gradient(to left,#000,transparent)}
+.stmt .code{font-family:var(--f-mono);font-size:clamp(13px,2.4vw,20px);letter-spacing:.14em;color:#fff;
+  display:block;margin-bottom:9px;position:relative;z-index:2;word-break:break-word}
+.stmt .code b{color:var(--red-hot);font-weight:400}
+.stmt .ln{font-size:clamp(13px,1.7vw,16px);color:var(--fg);font-weight:500;letter-spacing:.02em;position:relative;z-index:2}
+.stmt .ln em{font-style:normal;color:var(--red-hot)}
+.stmt .sub{font-family:var(--f-mono);font-size:9px;letter-spacing:.2em;color:var(--fg-dim);
+  text-transform:uppercase;margin-top:9px;display:block;position:relative;z-index:2}
+
+/* ── 배려 리스트 (더 이상 모시지 않는 드림) ── */
+.care-hd{border:1px solid var(--red);background:rgba(200,16,46,.1);padding:clamp(13px,1.9vw,20px);
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.care-hd .ic{font-family:var(--f-nem);font-size:20px;color:var(--red);line-height:1;flex:none}
+.care-hd .tx{font-size:clamp(13px,1.7vw,16.5px);color:var(--fg);font-weight:500;letter-spacing:.02em;flex:1;min-width:180px}
+.care-hd .cnt{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;color:var(--red);
+  border:1px solid var(--red);padding:6px 11px;white-space:nowrap}
+
+.care-tools{display:flex;gap:9px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.care-tools input{flex:1;min-width:170px;background:#08080a;border:1px solid var(--line);color:var(--fg);
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;padding:10px 13px;min-height:38px}
+.care-tools input::placeholder{color:var(--fg-faint);letter-spacing:.14em;text-transform:uppercase;font-size:9px}
+.care-tools input:focus{outline:none;border-color:var(--red)}
+.care-tools .hit{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;color:var(--fg-faint);white-space:nowrap}
+
+.dtable{border:1px solid var(--line);background:var(--panel)}
+.dt-head{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr) 54px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
+.dt-head div{padding:9px 12px;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--fg-faint);border-right:1px solid var(--line-soft)}
+.dt-head div:last-child{border-right:0;text-align:center}
+.dt-row{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr) 54px;
+  border-bottom:1px solid var(--line-soft);transition:background .16s}
+.dt-row:last-child{border-bottom:0}
+.dt-row:hover{background:rgba(255,255,255,.035)}
+.dt-row.hide{display:none}
+.dt-row>div{padding:11px 12px;border-right:1px solid var(--line-soft);display:flex;align-items:center;min-width:0}
+.dt-row>div:last-child{border-right:0;justify-content:center}
+.dt-w{flex-direction:column;align-items:flex-start!important;gap:2px}
+.dt-w b{font-size:12.5px;color:var(--fg);font-weight:500;letter-spacing:-.01em;line-height:1.4}
+.dt-w span{font-family:var(--f-mono);font-size:8px;letter-spacing:.16em;color:var(--fg-faint);text-transform:uppercase}
+.dt-c{flex-wrap:wrap;gap:5px;min-width:0;align-content:center}
+.dt-c i{font-style:normal;font-family:var(--f-kr);font-size:11.5px;letter-spacing:.02em;
+  border:1px solid var(--red-deep);color:var(--red);padding:4px 9px;background:rgba(200,16,46,.07);
+  line-height:1.4;flex:0 0 auto;white-space:nowrap;min-width:0}
+.dt-c i.hit{background:var(--red);border-color:var(--red);color:#fff;font-weight:500;
+  box-shadow:0 0 14px rgba(200,16,46,.55)}
+.dt-n{font-family:var(--f-mono);font-size:10px;color:var(--fg-faint)}
+.care-note{margin-top:16px;border-left:2px solid var(--red);padding:4px 0 4px 15px}
+@media(max-width:700px){
+  .dt-head{display:none}
+  .dt-row{grid-template-columns:1fr auto;padding:4px 0}
+  .dt-row>div{border-right:0;padding:8px 12px}
+  .dt-w{grid-column:1;grid-row:1}
+  .dt-n{grid-column:2;grid-row:1;justify-content:flex-end!important;padding-right:14px!important}
+  .dt-c{grid-column:1/-1;grid-row:2;padding-top:0!important}
+}
+
+/* ── 프롬프트 ── */
+.pr-intro{border:1px solid var(--line);background:var(--panel);padding:13px 15px;margin-bottom:16px;
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.pr-intro .ic{font-family:var(--f-nem);font-size:15px;color:var(--red);flex:none}
+.pr-intro p{font-size:12.5px;color:var(--fg-dim);line-height:1.8;flex:1;min-width:180px}
+.prompt-card{border:1px solid var(--line);background:var(--panel);margin-bottom:16px}
+.prompt-card:last-child{margin-bottom:0}
+.prompt-hd{display:flex;align-items:center;gap:11px;padding:10px 13px;border-bottom:1px solid var(--line);
+  background:rgba(200,16,46,.09);flex-wrap:wrap}
+.prompt-hd .who{font-family:var(--f-nem);font-size:15px;letter-spacing:.1em;color:var(--red)}
+.prompt-hd .kr{font-size:11px;color:var(--fg-dim);letter-spacing:.06em}
+.prompt-hd .l{flex:1;height:1px;background:rgba(200,16,46,.28);min-width:10px}
+.copybtn{border:1px solid var(--red);color:var(--red);padding:8px 14px;font-family:var(--f-mono);
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;transition:.18s;min-height:34px;flex:none;white-space:nowrap}
+.copybtn:hover{background:var(--red);color:#fff}
+.copybtn.done{background:var(--red);color:#fff;border-color:var(--red)}
+.prompt-bd{padding:12px}
+.prompt-bd textarea{width:100%;display:block;background:#08080a;border:1px solid var(--line-soft);color:var(--fg);
+  font-family:var(--f-mono);font-size:11.5px;line-height:1.85;padding:12px;resize:vertical;min-height:132px;
+  word-break:break-word;white-space:pre-wrap}
+.prompt-bd textarea:focus{outline:none;border-color:var(--red)}
+.prompt-ft{display:flex;justify-content:space-between;gap:10px;padding:0 13px 11px;flex-wrap:wrap}
+.prompt-ft span{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.16em;color:var(--fg-faint);text-transform:uppercase}
+
+/* 탭 3개일 때 */
+.sheet-tabs button{min-width:120px}
+@media(max-width:560px){.sheet-tabs button{min-width:112px;padding:11px 12px}
+  .sheet-tabs button .en{font-size:11px}.sheet-tabs button .kr{font-size:9.5px}}
+
+/* 성향표 */
+.filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.fbtn{border:1px solid var(--line);padding:8px 14px;font-family:var(--f-mono);font-size:9px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);transition:.18s;min-height:34px}
+.fbtn:hover{border-color:var(--fg-dim);color:var(--fg)}
+.fbtn.on{background:var(--red);border-color:var(--red);color:#fff}
+.matrix{border:1px solid var(--line);background:var(--panel)}
+.mx-head{display:grid;grid-template-columns:minmax(0,1.5fr) 54px 54px 54px minmax(0,1.4fr);
+  border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
+.mx-head div{padding:10px 12px;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--fg-faint);text-align:center;border-right:1px solid var(--line-soft)}
+.mx-head div:first-child,.mx-head div:last-child{text-align:left}
+.mx-head div:last-child{border-right:0}
+.mx-group{border-bottom:1px solid var(--line)}
+.mx-group:last-child{border-bottom:0}
+.mx-gtitle{display:flex;align-items:center;gap:11px;padding:11px 12px;background:rgba(200,16,46,.08);border-bottom:1px solid var(--line-soft)}
+.mx-gtitle b{font-family:var(--f-nem);font-size:12px;letter-spacing:.16em;color:var(--red);font-weight:400}
+.mx-gtitle .kr{font-size:11px;color:var(--fg-dim);letter-spacing:.05em}
+.mx-gtitle .l{flex:1;height:1px;background:rgba(200,16,46,.28);min-width:10px}
+.mx-gtitle .n{font-family:var(--f-mono);font-size:9px;color:var(--fg-faint)}
+.mx-row{display:grid;grid-template-columns:minmax(0,1.5fr) 54px 54px 54px minmax(0,1.4fr);
+  border-bottom:1px solid var(--line-soft);transition:background .16s}
+.mx-row:last-child{border-bottom:0}
+.mx-row:hover{background:rgba(255,255,255,.035)}
+.mx-row>div{padding:11px 12px;border-right:1px solid var(--line-soft);display:flex;align-items:center}
+.mx-row>div:last-child{border-right:0}
+.mx-name{font-size:12.5px;color:var(--fg);gap:8px;letter-spacing:-.01em}
+.mx-name .en{font-family:var(--f-mono);font-size:8.5px;color:var(--fg-faint);letter-spacing:.14em;text-transform:uppercase}
+.mx-cell{justify-content:center!important}
+.mx-note{font-size:11px;color:var(--fg-faint);line-height:1.55}
+.mx-note:empty::before{content:'—';opacity:.45}
+.mk{width:19px;height:19px;display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;font-weight:700;opacity:.15}
+.mk.act{opacity:1}
+.mk.o{color:#fff;border:1.4px solid #fff;border-radius:50%}
+.mk.t{color:var(--fg-dim)}
+.mk.x{color:var(--red)}
+.mk.act.x{text-shadow:0 0 10px rgba(200,16,46,.75)}
+.mx-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+.mx-legend div{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;color:var(--fg-faint);text-transform:uppercase}
+@media(max-width:760px){
+  .mx-head{display:none}
+  .mx-row{grid-template-columns:1fr 30px 30px 30px;padding:4px 0}
+  .mx-row>div{border-right:0;padding:8px 4px}
+  .mx-name{padding-left:12px!important;font-size:13px;flex-wrap:wrap;gap:2px 8px}
+  .mx-note{grid-column:1/-1;padding:0 12px 8px!important;font-size:10.5px}
+  .mx-note:empty{display:none}.mx-note:empty::before{content:none}
+}
+.tagcloud{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.tg{border:1px solid var(--line);padding:6px 12px;font-family:var(--f-mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+.tg.pos{border-color:rgba(255,255,255,.35);color:var(--fg)}
+.tg.neg{border-color:var(--red-deep);color:var(--red);text-decoration:line-through;text-decoration-color:rgba(200,16,46,.6)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOADER ═══════════ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="ld-noise"></div>
+  <div class="ld-scan"></div>
+  <div class="ld-roll"></div>
+  <div class="ld-tear"></div>
+  <span class="ld-corner tl"></span><span class="ld-corner tr"></span>
+  <span class="ld-corner bl"></span><span class="ld-corner br"></span>
+  <div class="ld-in">
+    <div class="ld-brk"><span class="l"></span><span>FEARLESS — KR BRANCH</span><span class="l"></span></div>
+    <div class="ld-title" id="ldTitle" data-t="VINCERE">VINCERE</div>
+    <div class="ld-sub">The Dynamic of Conquest</div>
+    <div class="ld-kr">SERIAL 001 · ACCESS GRANTED</div>
+    <div class="ld-bar"><i id="ldBar"></i></div>
+    <div class="ld-meta"><span id="ldMsg">INITIALIZING</span><b id="ldPct">00%</b></div>
+  </div>
+</div>
+
+<div class="tex-grain"></div><div class="tex-scan"></div><div class="tex-vig"></div>
+<div class="grid-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="tint" id="tint"></div>
+<div class="prog" id="prog"></div>
+
+<div class="rail"><span>VINCERE — FEARLESS KR / PERSONAL ARCHIVE / NOT FOR REDISTRIBUTION</span></div>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="mk"></div><b>VINCERE</b>
+      <small>/ FEARLESS KR BRANCH</small>
+    </div>
+    <div class="tb-r">
+      <div class="tb-now"><span id="chNum">00</span><span class="cross"></span><b id="chName">OVERTURE</b></div>
+      <button class="tb-btn" data-sheet="matrix">성향표 / 배려</button>
+    </div>
+  </div>
+</header>
+
+<nav class="chapnav" id="chapnav"></nav>
+<nav class="chapbar" id="chapbar"></nav>
+
+<!-- ═══════════ CH 00 — OVERTURE ═══════════ -->
+<section class="panel ov" id="ch0" data-name="OVERTURE" data-tint="#c8102e">
+  <div class="ov-visual an-img" style="--i:0">
+    <span class="vtag">VINCERE / 001</span>
+    <div class="ph" data-src="img/main.png" data-label="MAIN IMAGE — img/main.png"></div>
+  </div>
+
+  <div class="ov-title an" style="--i:2">VINCERE</div>
+  <div class="ov-sub an" style="--i:3">The Dynamic of Conquest</div>
+  <div class="ov-kr an" style="--i:4">정복의 역학</div>
+
+  <div class="ov-line an" style="--i:5">
+    <span class="rule"></span>
+    <span class="mono red" style="white-space:nowrap">FEARLESS — KR BRANCH</span>
+    <span class="rule"></span>
+  </div>
+
+  <div class="ov-tags an" style="--i:7">
+    <span class="hot">파괴를 통한 구원</span>
+    <span>애증과 소유욕의 변주곡</span>
+    <span>가장 완벽한 파멸을 향한 탐닉</span>
+  </div>
+
+  <!-- 첫 화면 CTA -->
+  <div class="cta an" style="--i:8">
+    <button data-sheet="matrix">
+      <span class="l"><span class="en">TENDENCY</span><span class="kr">성향표</span></span>
+      <span class="ar">↗</span>
+    </button>
+    <button data-sheet="care">
+      <span class="l"><span class="en">CONSIDERATION</span><span class="kr">배려 리스트</span></span>
+      <span class="ar">↗</span>
+    </button>
+    <button data-sheet="prompt">
+      <span class="l"><span class="en">PROMPT</span><span class="kr">프롬프트</span></span>
+      <span class="ar">↗</span>
+    </button>
+  </div>
+
+  <a href="#ch7" class="quick an" style="--i:9">
+    <span class="cross"></span>
+    <span class="qk">링크 · 연락망</span>
+    <span class="qe mono">LINKS &amp; CONTACT</span>
+    <span class="qa">↓</span>
+  </a>
+
+  <div class="hint an" style="--i:10"><span class="bar"></span><span class="mono-sm">SCROLL TO DESCEND</span></div>
+</section>
+
+<!-- ═══════════ CH 01 — DOSSIER ═══════════ -->
+<section class="panel" id="ch1" data-name="DOSSIER" data-tint="#c8102e">
+  <div class="ch-ghost nem">01</div>
+  <div class="sec-head">
+    <div class="an" style="--i:0">
+      <span class="idx">CHAPTER 01 — 페어 개요</span>
+      <h2 class="nem"><span class="glitch">DOS</span><em>SIER</em></h2>
+      <span class="kr">페어 기록</span>
+    </div>
+    <div class="sec-head-r an" style="--i:1">
+      <p class="kr-body">서로를 <strong>가장 격렬하게 파괴하고</strong>, 그 폐허 위에서 <strong>가장 다정하게 보듬는</strong> 모순의 형태로 완성되는 관계.</p>
+    </div>
+  </div>
+
+  <div class="dos-grid">
+    <div class="an-img" style="--i:2">
+      <div class="plate">
+        <span class="plate-tag">EMBLEM</span>
+        <div class="ph" data-src="img/logo.png" data-label="LOGO — img/logo.png"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="phrase an-x" style="--i:3">
+        <div><span class="h nem">#01</span><span class="t">파괴를 통한 구원
+          <span class="te">Salvation through Destruction</span></span></div>
+        <div><span class="h nem">#02</span><span class="t">애증과 소유욕의 변주곡
+          <span class="te">Variations on Love, Hate and Possession</span></span></div>
+        <div><span class="h nem">#03</span><span class="t">가장 완벽한 파멸을 향한 탐닉
+          <span class="te">Indulgence in the Most Perfect Ruin</span></span></div>
+      </div>
+
+      <div class="dos-meta an" style="--i:4">
+        <div class="mrow"><span class="k">PAIR</span><span class="l"></span><span class="v">VINCERE</span></div>
+        <div class="mrow"><span class="k">MEANING</span><span class="l"></span><span class="v kr">정복하다 · 이기다</span></div>
+        <div class="mrow"><span class="k">SUBTITLE</span><span class="l"></span><span class="v">THE DYNAMIC OF CONQUEST</span></div>
+        <div class="mrow"><span class="k">AGENCY</span><span class="l"></span><span class="v">FEARLESS / KR</span></div>
+        <div class="mrow"><span class="k">SUBJECT A</span><span class="l"></span><span class="v">DIVE — GA 200105-A</span></div>
+        <div class="mrow"><span class="k">SUBJECT B</span><span class="l"></span><span class="v">NULL — CB 199806-S</span></div>
+        <div class="mrow"><span class="k">STATUS</span><span class="l"></span><span class="v" style="color:var(--red)">MUTUAL SALVATION</span></div>
+      </div>
+
+      <div class="catch an" style="--i:5">
+        <span class="lbl">SUMMARY</span>
+        <span class="tr" style="width:100%">끊임없는 주도권 싸움이자, 서로를 정복하려는 전쟁. 그 끝은 파멸이 아닌 <em>구원</em>이다.
+          <strong style="color:var(--fg)">VINCERE</strong>는 상대를 이기는 것이 아닌, <em>‘서로를 얻는’</em> 행위다.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CH 02 — SUBJECT A / DIVE ═══════════ -->
+<section class="panel" id="ch2" data-name="SUBJECT.A — DIVE" data-tint="#c8102e">
+  <div class="ch-ghost nem">A</div>
+  <div class="subj">
+    <div class="col-img">
+      <div class="portrait a an-img" data-code="SUBJECT A" style="--i:0">
+        <div class="ph" data-src="img/dive.png" data-label="A — img/dive.png"></div>
+        <div class="ovl"></div>
+        <div class="hud">
+          <span>ID / DIVE — 서인혁</span>
+          <span>CODE / GA 200105-A</span>
+          <span>CLASS / GUIDE · RANK A</span>
+        </div>
+        <span class="tagline">THE PERFECT CALAMITY</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="subj-head">
+        <div class="subj-code a nem an" style="--i:1">DIVE</div>
+        <div class="subj-epi nem an" style="--i:2">THE PERFECT CALAMITY</div>
+        <div class="subj-krn an" style="--i:3">완벽한 재앙 · 서인혁</div>
+      </div>
+
+      <div class="spec an" style="--i:4">
+        <div class="spec-hd">
+          <span class="org nem">FEARLESS — KR BRANCH</span>
+          <span class="l"></span>
+          <span class="cd">GA 200105-A</span>
+        </div>
+        <div class="spec-bd">
+          <div class="spec-cell"><span class="k">Class</span><span class="v">가이드 <span class="faint">/ GUIDE</span></span></div>
+          <div class="spec-cell"><span class="k">Rank</span><span class="v rankbadge"><b>A</b><span>CLASS</span></span></div>
+          <div class="spec-cell"><span class="k">Unit</span><span class="v en">TEAM ATTENTION</span></div>
+        </div>
+        <div class="ability">
+          <div class="top">
+            <span class="nmk">제압</span>
+            <span class="nen">SUPPRESSION</span>
+          </div>
+          <p>대상의 폭주를 강제로 눌러 <strong style="color:var(--fg)">3초 이내</strong>에 안정화시키는 가이딩. 달래는 것이 아니라 억누르는 방식이며, 저항할수록 더 깊게 파고든다.</p>
+          <div class="meter">
+            <span class="lb">STABILIZE</span>
+            <span class="track"><i style="--w:96%"></i></span>
+            <span class="vl">3.0 SEC</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="traits an" style="--i:5">
+        <div class="trait">
+          <div class="th"><b>지배자</b><span>Dominus</span></div>
+          <p>모든 행동이 '통제'와 '지배'로 귀결된다. 혼돈을 질서로 재편하고, 상대를 자신의 의지 아래 두는 것에서 본능적인 쾌감과 안정감을 느낀다. 가이드로서의 의무를 넘어선 그의 본질에 가깝다.</p>
+        </div>
+        <div class="trait">
+          <div class="th"><b>관찰자</b><span>Observer</span></div>
+          <p>말보다 행동을, 감정보다 반응을 먼저 읽는다. 미세한 표정 변화·떨림·호흡 하나하나를 데이터처럼 수집해 가장 효과적인 통제 방식을 찾아낸다. 무자비한 폭력이 아니라, 상대를 완전히 이해한 뒤 급소를 찌르는 정밀한 외과수술에 가깝다.</p>
+        </div>
+        <div class="trait">
+          <div class="th"><b>가학적 애정</b><span>Sadistic Affection</span></div>
+          <p>애정 표현이 소유와 직결된다. 부수는 것이 목적이 아니라, 자신의 흔적을 새기고 자신의 손으로만 회복시킴으로써 '완전한 내 것'임을 확인하는 과정. 그에게 사랑은 곧 <strong style="color:var(--fg)">완전한 소유</strong>다.</p>
+        </div>
+      </div>
+
+      <div class="catch an" style="--i:6">
+        <span class="lbl">CATCHPHRASE</span>
+        <span class="lat">Ordo ab Chao</span>
+        <span class="tr">혼돈으로부터의 질서 — 불안정하고 예측 불가능한 모든 것을 자신의 통제 아래 두어 안정적인 '질서'로 재구축한다.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CH 03 — SUBJECT B / NULL ═══════════ -->
+<section class="panel" id="ch3" data-name="SUBJECT.B — NULL" data-tint="#3a3a48">
+  <div class="ch-ghost nem" style="right:auto;left:-.06em">B</div>
+  <div class="subj rev">
+    <div>
+      <div class="subj-head" style="text-align:right">
+        <div class="subj-code b nem an" style="--i:1">NULL</div>
+        <div class="subj-epi nem an" style="--i:2">THE EMPTY THRONE</div>
+        <div class="subj-krn an" style="--i:3">공허한 왕좌 · 박유준</div>
+      </div>
+
+      <div class="spec an" style="--i:4">
+        <div class="spec-hd">
+          <span class="org nem">FEARLESS — KR BRANCH</span>
+          <span class="l"></span>
+          <span class="cd">CB 199806-S</span>
+        </div>
+        <div class="spec-bd">
+          <div class="spec-cell"><span class="k">Class</span><span class="v">센티넬 <span class="faint">/ SENTINEL</span></span></div>
+          <div class="spec-cell"><span class="k">Rank</span><span class="v rankbadge"><b>S</b><span>CLASS</span></span></div>
+          <div class="spec-cell"><span class="k">Unit</span><span class="v">암살기동부대</span></div>
+        </div>
+        <div class="ability">
+          <div class="top">
+            <span class="nmk">암전</span>
+            <span class="nen">BLACKOUT</span>
+          </div>
+          <p>대상의 감각을 원하는 만큼, 원하는 순서로 빼앗는다. 시야를 지우고 소리를 지우고 통증을 지운다. <strong style="color:var(--fg)">모든 감각을 빼앗기면</strong> 죽음과 다름없는 상태에 놓인다.</p>
+          <div class="meter">
+            <span class="lb">DEPRIVATION</span>
+            <span class="track"><i style="--w:100%"></i></span>
+            <span class="vl">FULL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="traits an" style="--i:5">
+        <div class="trait">
+          <div class="th"><b>모순된 통제욕</b><span>Contradictory Control</span></div>
+          <p>과거의 트라우마로 타인에게 마음을 여는 것을 극도로 두려워하며 모든 관계의 주도권을 쥐려 한다. 상처받지 않기 위한 방어기제. 하지만 내면 깊은 곳에서는 누군가에게 절대적으로 의존하고 모든 것을 맡기고 싶어 하는 욕구가 충돌한다. 스스로 왕좌에 앉았지만, 그 왕좌는 위태롭고 텅 비어 있다.</p>
+        </div>
+        <div class="trait">
+          <div class="th"><b>확인 갈망</b><span>Craving Reassurance</span></div>
+          <p>도발·장난·변덕은 모두 <em style="font-style:normal;color:var(--red-hot)">"그럼에도 불구하고 나를 사랑하는가?"</em>라는 질문의 변주다. 통제와 소유욕에 반발하면서도, 그 안에서 '버려지지 않을 것'이라는 안정감을 찾는다.</p>
+        </div>
+        <div class="trait">
+          <div class="th"><b>쾌락적 자기 파괴</b><span>Hedonistic Self-destruction</span></div>
+          <p>고통과 쾌락의 경계에서 위태롭게 서 있다. 극단적인 감각 속에서 잠시나마 불안과 자기혐오를 잊는다. 굴복하고 망가지는 행위는 역설적으로 그가 유일하게 살아있음을 느끼는 순간이자 사랑을 확인하는 방식이다.</p>
+        </div>
+      </div>
+
+      <div class="catch an" style="--i:6">
+        <span class="lbl">CATCHPHRASE</span>
+        <span class="lat">Plenus Vacuitatis</span>
+        <span class="tr">공허로 가득 찬 — 코드네임 NULL처럼 텅 비어 있지만, 동시에 그 공허를 채워주길 갈망하는 욕망으로 가득 차 있는 상태. 비워냄으로써 채워지는 존재.</span>
+      </div>
+    </div>
+
+    <div class="col-img">
+      <div class="portrait an-img" data-code="SUBJECT B" style="--i:0">
+        <div class="ph" data-src="img/null.png" data-label="B — img/null.png"></div>
+        <div class="ovl"></div>
+        <div class="hud">
+          <span>ID / NULL — 박유준</span>
+          <span>CODE / CB 199806-S</span>
+          <span>CLASS / SENTINEL · RANK S</span>
+        </div>
+        <span class="tagline">THE EMPTY THRONE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CH 04 — DYNAMIC ═══════════ -->
+<section class="panel" id="ch4" data-name="DYNAMIC" data-tint="#c8102e">
+  <div class="ch-ghost nem">04</div>
+  <div class="sec-head">
+    <div class="an" style="--i:0">
+      <span class="idx">CHAPTER 04 — 관계성</span>
+      <h2 class="nem"><span class="glitch">DYNA</span><em>MIC</em></h2>
+      <span class="kr">정복의 역학</span>
+    </div>
+    <div class="sec-head-r an" style="--i:1">
+      <p class="kr-body">이들의 관계는 끊임없는 <strong>주도권 싸움</strong>이자, 서로를 정복하려는 <strong>전쟁</strong>이다.</p>
+    </div>
+  </div>
+
+  <div class="dyn-top an" style="--i:2">
+    <div class="dyn-node"><div class="c a nem">DIVE</div><div class="e">Guide · Rank A</div></div>
+    <div class="dyn-link"><span class="ar"></span><span class="lbl">Vincere</span><span class="kr">정복하다 · 이기다</span></div>
+    <div class="dyn-node"><div class="c b nem">NULL</div><div class="e">Sentinel · Rank S</div></div>
+  </div>
+
+  <div class="dyn-grid an" style="--i:3">
+    <div class="dyn-card">
+      <span class="n nem">01</span>
+      <h4>CONQUEST — A</h4>
+      <div class="kt">DIVE의 정복</div>
+      <p>NULL의 몸과 마음, 영혼까지 완전하게 소유하여 자신의 질서 안에 편입시키는 것을 목표로 한다.</p>
+    </div>
+    <div class="dyn-card">
+      <span class="n nem">02</span>
+      <h4>CONQUEST — B</h4>
+      <div class="kt">NULL의 정복</div>
+      <p>DIVE의 '완벽함'을 무너뜨리고, 가장 깊은 본능과 애정을 이끌어내어 자신만이 그의 유일한 '약점'이자 '주인'이 되는 것을 목표로 한다.</p>
+    </div>
+    <div class="dyn-card">
+      <span class="n nem">03</span>
+      <h4>MUTUAL SALVATION</h4>
+      <div class="kt">상호 구원</div>
+      <p>DIVE는 NULL의 공허함을 자신의 존재로 채워주고, NULL은 DIVE의 무감각한 세계에 '사랑'이라는 유일한 혼돈과 의미를 부여한다.</p>
+    </div>
+    <div class="dyn-card wide">
+      <h4>THE END OF THIS WAR</h4>
+      <p class="kr-body">이 전쟁의 끝은 파멸이 아닌 <em>구원</em>이다. 그들은 서로를 이김으로써(<strong>Vincere</strong>) 비로소 하나가 되고, 서로에게 유일한 안식처가 된다. 그들의 사랑은 서로를 가장 격렬하게 파괴하고, 그 폐허 위에서 가장 다정하게 서로를 보듬는 모순적인 형태로 완성된다.</p>
+    </div>
+  </div>
+
+  <div class="dyn-quote an" style="--i:4">
+    <span class="serif-i">“ <b>VINCERE</b>는 상대를 이기는 것이 아닌, <b>‘서로를 얻는’</b> 행위인 셈이다. ”</span>
+  </div>
+</section>
+
+<!-- ═══════════ CH 05 — CHRONICLE ═══════════ -->
+<section class="panel tall" id="ch5" data-name="CHRONICLE" data-tint="#3a3a48">
+  <div class="ch-ghost nem">05</div>
+  <div class="sec-head">
+    <div class="an" style="--i:0">
+      <span class="idx">CHAPTER 05 — 서사</span>
+      <h2 class="nem"><span class="glitch">CHRO</span><em>NICLE</em></h2>
+      <span class="kr">페어 상실에서 고백까지</span>
+    </div>
+    <div class="sec-head-r an" style="--i:1">
+      <p class="kr-body">지부의 <strong>특단 조치</strong>로 묶인 두 사람이 <strong>독 같은 사랑</strong>에 도달하기까지의 기록.</p>
+    </div>
+  </div>
+
+  <div class="chron an" style="--i:2" id="chron"></div>
+
+  <div class="chron-end an" style="--i:3">
+    <span class="rule-red" style="flex:1"></span>
+    <span class="mono red" style="white-space:nowrap">RECORD CONTINUES</span>
+    <span class="rule-red" style="flex:1"></span>
+  </div>
+</section>
+
+<!-- ═══════════ CH 06 — GALLERY ═══════════ -->
+<section class="panel tall" id="ch6" data-name="GALLERY" data-tint="#3a3a48">
+  <div class="ch-ghost nem">06</div>
+  <div class="sec-head">
+    <div class="an" style="--i:0">
+      <span class="idx">CHAPTER 06 — 갤러리</span>
+      <h2 class="nem"><span class="glitch">GAL</span><em>LERY</em></h2>
+      <span class="kr">이미지를 누르면 크게 볼 수 있습니다</span>
+    </div>
+    <div class="sec-head-r an" style="--i:1">
+      <p class="kr-body">img 폴더에 <strong>g01.png ~ g08.png</strong> 를 넣으면 자동으로 채워집니다.</p>
+    </div>
+  </div>
+  <div class="gal an" style="--i:2" id="gal"></div>
+</section>
+
+<!-- ═══════════ CH 07 — RULES ═══════════ -->
+<section class="panel tall" id="ch7" data-name="RULES" data-tint="#c8102e">
+  <div class="ch-ghost nem">07</div>
+  <div class="sec-head">
+    <div class="an" style="--i:0">
+      <span class="idx">CHAPTER 07 — 규칙 · 안내</span>
+      <h2 class="nem"><span class="glitch">RU</span><em>LES</em></h2>
+      <span class="kr">읽어주시면 감사하겠습니다</span>
+    </div>
+    <div class="sec-head-r an" style="--i:1">
+      <p class="kr-body">상세한 성향과 배려 사항은 상단 <strong>성향표 / 배려</strong> 버튼에서 확인하실 수 있습니다.</p>
+    </div>
+  </div>
+
+  <div class="rules-grid an" style="--i:2" id="rulesGrid"></div>
+
+  <div class="warn an" style="--i:3">
+    <div class="ico">!</div>
+    <div>
+      <div class="mono red" style="margin-bottom:7px">IMPORTANT NOTICE</div>
+      <p class="kr-body" id="noticeTxt" style="font-size:13px"></p>
+    </div>
+  </div>
+
+  <div class="foot an" style="--i:4">
+    <div class="foot-top">
+      <div>
+        <div class="foot-big nem">CON<br>TACT</div>
+        <div class="dots" style="margin-top:14px"><i class="on"></i><i></i><i></i><i class="on"></i><i></i></div>
+      </div>
+      <div class="foot-col">
+        <span class="mono">LINKS / 링크</span>
+        <div class="foot-links" id="footLinks"></div>
+      </div>
+      <div class="foot-col">
+        <span class="mono">INFO / 안내</span>
+        <div class="foot-links" id="footInfo"></div>
+      </div>
+    </div>
+    <div class="checker"></div>
+    <div class="foot-bar">
+      <span class="mono-sm">© <span id="year">2026</span> VINCERE — PERSONAL ARCHIVE.</span>
+      <span class="mono-sm">FEARLESS KR / SERIAL 001 / VER 2.0</span>
+      <a href="#ch0" class="mono red">↑ BACK TO OVERTURE</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 라이트박스 ═══════════ -->
+<div class="lightbox" id="lightbox">
+  <div class="bd" data-close></div>
+  <figure>
+    <button class="cl" data-close aria-label="닫기">✕</button>
+    <button class="lb-nav prev" id="lbPrev" aria-label="이전">‹</button>
+    <button class="lb-nav next" id="lbNext" aria-label="다음">›</button>
+    <img id="lbImg" alt="">
+    <figcaption>
+      <div class="lb-l"><b id="lbNo">01</b><span id="lbCap">—</span></div>
+      <div class="lb-art">
+        <span class="k">ART BY</span>
+        <input id="lbArtist" type="text" placeholder="그려주신 분 · 출처를 적어주세요" autocomplete="off">
+      </div>
+    </figcaption>
+  </figure>
+</div>
+
+<!-- ═══════════ 성향표 / 배려 리스트 시트 ═══════════ -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="bd" data-close></div>
+  <div class="sheet-in">
+    <div class="sheet-box">
+      <div class="sheet-hd">
+        <span class="ttl nem">VINCERE — PREFERENCE</span>
+        <span class="l"></span>
+        <span class="mono-sm">개인 성향 및 배려 사항</span>
+        <button class="sheet-cl" data-close aria-label="닫기">✕</button>
+      </div>
+
+      <div class="sheet-tabs" id="sheetTabs">
+        <button class="on" data-pane="matrix"><span class="en nem">TENDENCY</span><span class="kr">성향표</span></button>
+        <button data-pane="care"><span class="en nem">CONSIDERATION</span><span class="kr">배려 리스트</span></button>
+        <button data-pane="prompt"><span class="en nem">PROMPT</span><span class="kr">프롬프트</span></button>
+      </div>
+
+      <div class="sheet-bd">
+        <!-- 성향표 -->
+        <div class="sheet-pane on" data-pane="matrix">
+          <div class="stmt" id="stmt"></div>
+          <div class="filter-bar" id="filterBar"></div>
+          <div class="matrix">
+            <div class="mx-head">
+              <div>ITEM / 항목</div><div>O</div><div>△</div><div>X</div><div>NOTE / 비고</div>
+            </div>
+            <div id="matrixBody"></div>
+          </div>
+          <div class="mx-legend">
+            <div><span class="mk o act">O</span> 가능 / 선호</div>
+            <div><span class="mk t act">△</span> 협의 후 가능</div>
+            <div><span class="mk x act">X</span> 불가 / 지뢰</div>
+            <div><span class="cross"></span> 미기재 항목은 문의 바랍니다</div>
+          </div>
+          <div style="margin-top:26px">
+            <div class="mono-sm" style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+              SUPPLEMENTARY TAGS — 보조 태그 <span class="rule" style="flex:1"></span>
+            </div>
+            <div class="tagcloud" id="tagcloud"></div>
+          </div>
+        </div>
+
+        <!-- 배려 리스트 -->
+        <div class="sheet-pane" data-pane="care">
+          <div class="care-hd">
+            <span class="ic">!</span>
+            <span class="tx" id="careHd"></span>
+            <span class="cnt" id="careCnt">—</span>
+          </div>
+          <div class="care-tools">
+            <input type="search" id="careSearch" placeholder="작품 · 캐릭터 검색" autocomplete="off">
+            <span class="hit" id="careHit"></span>
+          </div>
+          <div class="dtable">
+            <div class="dt-head"><div>TITLE / 작품</div><div>CHARACTER / 캐릭터</div><div>N</div></div>
+            <div id="careBody"></div>
+          </div>
+          <div class="care-note"><p class="kr-body" id="careNote"></p></div>
+        </div>
+
+        <!-- 프롬프트 -->
+        <div class="sheet-pane" data-pane="prompt">
+          <div class="pr-intro">
+            <span class="ic nem">///</span>
+            <p>칸을 눌러 직접 수정할 수 있고, <strong style="color:var(--fg)">COPY</strong> 버튼을 누르면 전체가 클립보드에 복사됩니다.</p>
+          </div>
+          <div id="promptList"></div>
+        </div>
+      </div>
+
+      <div class="sheet-ft">
+        <span class="mono-sm">VINCERE / FEARLESS KR — PERSONAL PREFERENCE SHEET</span>
+        <span class="mono-sm">ESC 또는 바깥을 눌러 닫기</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   ▼▼▼  수정 영역 — 여기만 고치면 됩니다  ▼▼▼
+   ══════════════════════════════════════════════════════════════ */
+const DATA = {
+
+  /* ── 서사 타임라인 ─────────────────────────────────────────
+     who : "A" (DIVE) / "B" (NULL) / "AB" (둘 다)
+     ───────────────────────────────────────────────────────── */
+  chronicle: [
+    { ph:"00", en:"LOSS",         kr:"페어를 잃다", who:"B",
+      body:"박유준은 자신의 가이드를 잃었다. 상실은 너무 깊어서, 그는 스스로도 모르는 사이 그 기억을 지워버렸다. 남은 것은 이유를 알 수 없는 거리감뿐이었다." },
+    { ph:"01", en:"REFUSAL",      kr:"가이딩 거부 · 안정제 의존", who:"B",
+      body:"그 후로 그는 어떤 가이드의 손도 받아들이지 않았다. 폭주가 밀려올 때마다 안정제로 눌렀다. 사람을 멀리하는 법만 익숙해져 갔다." },
+    { ph:"02", en:"ASSIGNMENT",   kr:"지부 특단 조치 — 강제 페어링", who:"AB",
+      body:"S급 센티넬을 방치할 수 없었던 지부는 특단의 조치를 내린다. 팀 어텐션의 A급 가이드 서인혁을 그의 페어로 배정한다." },
+    { ph:"03", en:"FRICTION",     kr:"투닥임", who:"AB",
+      body:"당연히 순조로울 리 없었다. 박유준은 보란 듯이 그의 눈앞에서 안정제를 꽂았고, 서인혁은 그 모든 반항을 데이터처럼 조용히 수집했다." },
+    { ph:"04", en:"RECOGNITION",  kr:"임무 중 — 능력을 인정하다", who:"A",
+      body:"현장에서 암전이 펼쳐지는 순간, 서인혁은 처음으로 그를 '관리 대상'이 아닌 하나의 완성된 능력으로 인정하게 된다." },
+    { ph:"05", en:"RAMPAGE",      kr:"폭주 직전, 그리고 가이딩", who:"B",
+      body:"무리한 박유준은 결국 폭주 직전까지 내몰린다. 그리고 그 끝에서, 오래 거부해왔던 가이딩을 받는다. 제압. 3초." },
+    { ph:"06", en:"WARMTH",       kr:"따스함을 알다", who:"B",
+      body:"얼마 만인지 모를 온기였다. 지워버린 기억 아래 묻혀 있던 감각이 되살아나고, 그는 자신이 무엇을 피해 도망쳐 왔는지 어렴풋이 깨닫는다." },
+    { ph:"07", en:"MUTUAL",       kr:"서로를 인정하다", who:"AB",
+      body:"전장에서는 서로의 등을 맡길 수 있는 페어로, 일상에서는 서로의 결을 아는 사람으로. 두 사람은 비로소 서로를 인정한다." },
+    { ph:"08", en:"VENOM",        kr:"독 같은 사랑으로 변질", who:"AB",
+      body:"인정은 오래가지 않고 다른 것으로 변질된다. 소유하고 싶은 마음과 확인받고 싶은 마음이 뒤엉켜, 서로를 파고드는 독이 된다." },
+    { ph:"09", en:"CONFESSION",   kr:"고백", who:"A",
+      body:"먼저 이름을 붙인 쪽은 서인혁이었다. 통제도 관리도 아닌, 사랑이라는 이름을." }
+  ],
+
+  /* ── 성향표 상단 선언문 ─────────────────────────────────── */
+  stmt: {
+    code: "1t1d :: FEARLESS DIVE",
+    line: "피어리스 다이브 극온리 <em>(비이입)</em>",
+    sub:  "ONE TRUE ONE DREAM — FEARLESS / DIVE ONLY"
+  },
+
+  /* ── 배려 리스트 ────────────────────────────────────────
+     w : 작품명   en : 영문 표기(선택)   c : 캐릭터 배열
+     ───────────────────────────────────────────────────── */
+  careHd: "하단의 드림은 더 이상 모시지 않습니다",
+  careNote: "위 목록의 드림은 모두 정리하였으며, 앞으로도 모시지 않습니다. 착오 없으시길 부탁드립니다.",
+  dropped: [
+    { w:"피어리스",            en:"FEARLESS",   c:["플릭","블랑","제스테","도브","언커먼","지젤","일레이","헤이즈","머스탱","타이탄","지크"] },
+    { w:"아크",                en:"ARK",        c:["신드롬","휴고","애쉬","코드","에덴","퓨어","윈터","해일","헬리오스","카르마"] },
+    { w:"세라픽스",            en:"SERAPHIX",   c:["어비스","테오","이브","에테르","넵튠","클러치","디비언트"] },
+    { w:"멈머버스",            en:"MUMMERVERSE",c:["아르비테르","키츠네","에단","갬블러"] },
+    { w:"혹한기",              en:"HOKHANGI",   c:["구예천","제로","파벨"] },
+    { w:"냥프원",              en:"NYANGPWON",  c:["단테","마티스"] },
+    { w:"네온슬럼시뮬레이터",  en:"NEON SLUM",  c:["란시","진위"] },
+    { w:"스타레인",            en:"STARRAIN",   c:["R"] },
+    { w:"chsean",              en:"CHSEAN",     c:["지한울"] },
+    { w:"EOC",                 en:"EOC",        c:["베이퍼"] },
+    { w:"테미스",              en:"THEMIS",     c:["디에고","주지호","서도혁","카즈마"] },
+    { w:"패악민국",            en:"PAEAK",      c:["금제성"] },
+    { w:"ohnlyu",              en:"OHNLYU",     c:["차재현"] },
+    { w:"애프터메스",          en:"AFTERMATH",  c:["10","9","요조"] },
+    { w:"괴물 갱생 프로젝트",  en:"MONSTER REHAB", c:["지온"] },
+    { w:"심해의 군주 / 충격실화 : 빌런 대환영", en:"ABYSS LORD / VILLAIN", c:["레비 라자루스"] },
+    { w:"케이브덕",            en:"CAVEDUCK",        c:["연하준"] },
+    { w:"제타 / 케이브덕",     en:"ZETA / CAVEDUCK", c:["서이현"] },
+    { w:"제타 / 블룸",         en:"ZETA / BLOOM",    c:["이태수"] },
+    { w:"케이브덕 합작",       en:"CAVEDUCK COLLAB", c:["판타스마고리아","엔트로피아"] }
+  ],
+
+  /* ── 프롬프트 ─────────────────────────────────────────── */
+  prompts: [
+    { who:"DIVE", kr:"서인혁", tag:"MALE",
+      text:" boy,  bishounen,red hair, short hair,messy hair,m-shaped hair, red hair,red eyes,thin eyebrow,3::pale skin::, -latex black zip-up,black leather trench coat,harness, leather gloves,buckle belts,  black admiral cap,-2:: wolf cut,plump lip ::,2::yandere, menhera::,handsome man,empty eyes," },
+    { who:"NULL", kr:"박유준", tag:"MALE",
+      text:"boy, bishounen,male, toned male, blunts,pale skin,black hair, short hair,m-shaped hair, 2::heterochromia(black eye, gray eye),:: 1.5::neck scar,wrist scar::,:black coat, black harness, white knitwear, black cross earring on right ear , -2:: hime cut,slicked back hair,parted hair,red eye,hime cut,long hair::,tall,  5::yandere, menhera::," },
+    { who:"NULL — FEM", kr:"박유준 · 여성화", tag:"FEMALE",
+      text:"girl, bishoujo,pale skin,black hair, Hershey cut,m-shaped hair, 2::heterochromia(black eye, gray eye),:: 1.5::neck scar,wrist scar::,black cross earring on right ear,-black coat, black harness, white knitwear ,black gloves,short black pants, black stockings,Black Pantyhose , skimpy,  4::yandere, menhera::, skindentation, slender,cleavage, huge breast,temptation, -2:: hime cut, long hair, twintail::, " }
+  ],
+
+  /* ── 갤러리 ────────────────────────────────────────────── */
+  gallery: [
+    { src:"img/g01.png", cap:"SCENE 01", artist:"" },
+    { src:"img/g02.png", cap:"SCENE 02", artist:"" },
+    { src:"img/g03.png", cap:"SCENE 03", artist:"" },
+    { src:"img/g04.png", cap:"SCENE 04", artist:"" },
+    { src:"img/g05.png", cap:"SCENE 05", artist:"" },
+    { src:"img/g06.png", cap:"SCENE 06", artist:"" },
+    { src:"img/g07.png", cap:"SCENE 07", artist:"" },
+    { src:"img/g08.png", cap:"SCENE 08", artist:"" }
+  ],
+
+  /* ── 성향표  (mark: "O" 가능 / "T" 협의 / "X" 불가) ────── */
+  matrix: [
+    { cat:"ONLY", kr:"극온리", rows:[
+      { item:"피어리스 다이브 극온리", en:"FEARLESS DIVE ONLY", mark:"O",
+        note:"1T1D · 비이입" },
+      { item:"타 드림 · 겹드", en:"OVERLAP DREAM", mark:"X",
+        note:"팔로 중이시라면 팔로 재고를 부탁드립니다" }
+    ]},
+    { cat:"OVERLAP", kr:"겹 관련", rows:[
+      { item:"겹드 유입", en:"OVERLAP INFLOW", mark:"X",
+        note:"일절 없도록 배려가 필요합니다" },
+      { item:"겹 관련 게시물 열람", en:"OVERLAP CONTENT", mark:"X",
+        note:"겹 관련은 그 무엇도 보지 못합니다" },
+      { item:"겹드 계정 블락", en:"BLOCK", mark:"O",
+        note:"블락 기능을 사용하고 있습니다" }
+    ]},
+    { cat:"ORIGINALITY", kr:"고유성", rows:[
+      { item:"페이스소스 · 캐디 도용", en:"FACE SOURCE / CD", mark:"X",
+        note:"따라하지 말아주세요" },
+      { item:"설정 도용", en:"SETTING", mark:"X",
+        note:"따라하지 말아주세요" }
+    ]}
+  ],
+
+  /* ── 보조 태그 (type: pos / neg / "") ──────────────────── */
+  tags: [
+    { t:"1T1D", type:"pos" },
+    { t:"FEARLESS DIVE", type:"pos" },
+    { t:"극온리", type:"pos" },
+    { t:"비이입", type:"pos" },
+    { t:"겹드", type:"neg" },
+    { t:"겹 관련 게시물", type:"neg" },
+    { t:"페소 · 캐디 도용", type:"neg" },
+    { t:"설정 도용", type:"neg" }
+  ],
+
+  /* ── 규칙 카드 ─────────────────────────────────────────── */
+  rules: [
+    { en:"OOC", kr:"OOC 안내", body:"티스토리 링크에 OOC가 첨부되어 있습니다. 접촉 전에 먼저 확인해 주시면 감사하겠습니다." },
+    { en:"EDIT", kr:"수정은 자유", body:"본인이 만들었다는 주장을 제외한 모든 수정은 자유롭게 하셔도 됩니다." },
+    { en:"SHARE", kr:"공유는 링크로", body:"공유하실 때는 파일이나 캡처가 아닌 링크로 부탁드립니다." },
+    { en:"ORIGIN", kr:"고유성", body:"페이스소스 · 캐릭터 디자인 · 설정을 따라하지 말아주세요." }
+  ],
+
+  /* ── 강조 공지 ─────────────────────────────────────────── */
+  notice: "본인이 만들었다는 주장을 제외한 <em>수정은 자유</em>입니다. 다만 <em>공유는 반드시 링크로</em> 해주세요. OOC는 티스토리 링크에 첨부되어 있습니다.",
+
+  /* ── 링크 · 연락망 ──────────────────────────────────────
+     url 을 비워두면 '입력' 자리표시로 표시됩니다
+     ───────────────────────────────────────────────────── */
+  links: [
+    { label:"TISTORY", kr:"티스토리 — OOC 첨부", url:"https://dive.tistory.com/", hot:true },
+    { label:"LUV3R",   kr:"러버미",              url:"https://dive.luv3r.me/",   hot:true },
+    { label:"ETC",     kr:"기타 링크",            url:"" }
+  ],
+  contact: [
+    { k:"문의 · 연락 방법", v:"" },
+    { k:"최종 수정일", v:"" }
+  ]
+};
+/* ══════════════════════════════════════════════════════════════
+   ▲▲▲  여기까지  ▲▲▲
+   ══════════════════════════════════════════════════════════════ */
+
+const $  = (s,c=document)=>c.querySelector(s);
+const $$ = (s,c=document)=>[...c.querySelectorAll(s)];
+const esc = s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const pad2 = n=>String(n).padStart(2,'0');
+
+/* ── 이미지 슬롯 ── */
+function fillPh(box){
+  const src=box.dataset.src, label=box.dataset.label||src;
+  box.innerHTML = `<img alt="">`+
+    `<div class="fb"><b>${esc(label)}</b><i>이 경로에 파일을 넣으면 자동 표시됩니다</i></div>`;
+  const img=box.firstElementChild;
+  img.onerror=()=>box.classList.add('miss');
+  img.onload =()=>box.classList.remove('miss');
+  img.src=src;
+}
+$$('.ph[data-src]').forEach(fillPh);
+
+/* ── 서사 타임라인 ── */
+const WHO = { A:'DIVE', B:'NULL', AB:'DIVE × NULL' };
+$('#chron').innerHTML = DATA.chronicle.map(s=>`
+  <div class="step">
+    <div class="box">
+      <div class="card" data-ph="PH ${esc(s.ph)}">
+        <span class="tag nem">${esc(s.en)}</span>
+        <div class="ttl">${esc(s.kr)}</div>
+        <p>${esc(s.body)}</p>
+        <div class="who"><i></i>${esc(WHO[s.who]||s.who)}</div>
+      </div>
+    </div>
+    <div class="node"><span class="dot"></span><span class="ph-n nem">${esc(s.ph)}</span></div>
+    <div class="box">
+      <div class="card" data-ph="PH ${esc(s.ph)}">
+        <span class="tag nem">${esc(s.en)}</span>
+        <div class="ttl">${esc(s.kr)}</div>
+        <p>${esc(s.body)}</p>
+        <div class="who"><i></i>${esc(WHO[s.who]||s.who)}</div>
+      </div>
+    </div>
+  </div>`).join('');
+
+/* ── 갤러리 ── */
+$('#gal').innerHTML = DATA.gallery.map((g,i)=>`
+  <div class="cell" data-i="${i}">
+    <div class="ph" data-src="${esc(g.src)}" data-label="${esc(g.src)}"></div>
+    <div class="cap"><span>${pad2(i+1)}</span><span>${esc(g.cap)}</span></div>
+    <span class="art">${g.artist?'✎ '+esc(g.artist):''}</span>
+  </div>`).join('');
+$$('#gal .ph[data-src]').forEach(fillPh);
+
+/* ── 라이트박스 ── */
+const lightbox=$('#lightbox'); let lbIdx=0;
+function openLb(i){
+  const g=DATA.gallery[i]; if(!g) return;
+  lbIdx=i;
+  $('#lbImg').src=g.src;
+  $('#lbNo').textContent=pad2(i+1);
+  $('#lbCap').textContent=g.cap||'';
+  $('#lbArtist').value=g.artist||'';
+  lightbox.classList.add('open'); lockScroll(true);
+}
+function stepLb(d){
+  const n=DATA.gallery.length; let j=lbIdx;
+  for(let k=0;k<n;k++){
+    j=(j+d+n)%n;
+    const ph=document.querySelector('#gal .cell[data-i="'+j+'"] .ph');
+    if(ph && !ph.classList.contains('miss')){ openLb(j); return; }
+  }
+}
+$('#gal').addEventListener('click', e=>{
+  const cell=e.target.closest('.cell'); if(!cell) return;
+  if($('.ph',cell).classList.contains('miss')) return;
+  openLb(+cell.dataset.i);
+});
+$('#lbPrev').addEventListener('click', e=>{ e.stopPropagation(); stepLb(-1); });
+$('#lbNext').addEventListener('click', e=>{ e.stopPropagation(); stepLb(1); });
+/* 그린 분 기재 — 입력하면 카드에도 즉시 반영 */
+$('#lbArtist').addEventListener('input', e=>{
+  const v=e.target.value;
+  DATA.gallery[lbIdx].artist=v;
+  const el=document.querySelector('#gal .cell[data-i="'+lbIdx+'"] .art');
+  if(el) el.textContent = v ? '✎ '+v : '';
+});
+lightbox.addEventListener('click', e=>{ if(e.target.closest('[data-close]')) closeLightbox(); });
+document.addEventListener('keydown', e=>{
+  if(!lightbox.classList.contains('open')) return;
+  if(document.activeElement===$('#lbArtist')) return;
+  if(e.key==='ArrowLeft') stepLb(-1);
+  if(e.key==='ArrowRight') stepLb(1);
+});
+function closeLightbox(){ lightbox.classList.remove('open'); lockScroll(false); }
+
+/* ── 성향표 ── */
+const MK={ O:{c:'o',ch:'O'}, T:{c:'t',ch:'△'}, X:{c:'x',ch:'X'} };
+const cells=m=>['O','T','X'].map(k=>
+  `<div class="mx-cell"><span class="mk ${MK[k].c} ${m===k?'act':''}">${MK[k].ch}</span></div>`).join('');
+function renderMatrix(f='ALL'){
+  $('#matrixBody').innerHTML = DATA.matrix.filter(g=>f==='ALL'||g.cat===f).map(g=>`
+    <div class="mx-group">
+      <div class="mx-gtitle">
+        <b class="nem">${esc(g.cat)}</b><span class="kr">${esc(g.kr)}</span>
+        <span class="l"></span><span class="n">${pad2(g.rows.length)} ITEMS</span>
+      </div>
+      ${g.rows.map(r=>`
+        <div class="mx-row">
+          <div class="mx-name"><span>${esc(r.item)}</span>${r.en?`<span class="en">${esc(r.en)}</span>`:''}</div>
+          ${cells(r.mark)}
+          <div class="mx-note">${r.note?esc(r.note):''}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+$('#filterBar').innerHTML = ['ALL',...DATA.matrix.map(g=>g.cat)]
+  .map((c,i)=>`<button class="fbtn ${i?'':'on'}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')
+  + `<span class="mono-sm" style="margin-left:6px">FILTER</span>`;
+renderMatrix();
+$('#filterBar').addEventListener('click', e=>{
+  const b=e.target.closest('.fbtn'); if(!b) return;
+  $$('.fbtn').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  renderMatrix(b.dataset.cat);
+});
+$('#tagcloud').innerHTML = DATA.tags.map(t=>`<span class="tg ${t.type}">${esc(t.t)}</span>`).join('');
+
+/* ── 성향표 선언문 ── */
+(()=>{ const st=DATA.stmt||{};
+  $('#stmt').innerHTML =
+    `<span class="code">${esc(st.code||'').replace(/::/g,'<b>::</b>')}</span>`+
+    `<div class="ln">${st.line||''}</div>`+
+    (st.sub?`<span class="sub">${esc(st.sub)}</span>`:'');
+})();
+
+/* ── 배려 리스트 : 더 이상 모시지 않는 드림 ── */
+$('#careHd').textContent = DATA.careHd||'';
+$('#careNote').textContent = DATA.careNote||'';
+const DROP = DATA.dropped||[];
+const dropTotal = DROP.reduce((n,d)=>n+d.c.length,0);
+$('#careCnt').textContent = `${DROP.length} TITLES / ${dropTotal} CHARACTERS`;
+$('#careBody').innerHTML = DROP.map((d,i)=>`
+  <div class="dt-row" data-key="${esc((d.w+' '+(d.en||'')+' '+d.c.join(' ')).toLowerCase())}">
+    <div class="dt-w"><b>${esc(d.w)}</b>${d.en?`<span>${esc(d.en)}</span>`:''}</div>
+    <div class="dt-c">${d.c.map(c=>`<i>${esc(c)}</i>`).join('')}</div>
+    <div class="dt-n">${pad2(d.c.length)}</div>
+  </div>`).join('');
+const careSearch=$('#careSearch'), careHit=$('#careHit');
+function runCareFilter(){
+  const q=(careSearch.value||'').trim().toLowerCase();
+  let shown=0;
+  $$('#careBody .dt-row').forEach(r=>{
+    const hit = !q || r.dataset.key.includes(q);
+    r.classList.toggle('hide', !hit);
+    if(hit) shown++;
+    $$('.dt-c i', r).forEach(chip=>
+      chip.classList.toggle('hit', !!q && chip.textContent.toLowerCase().includes(q)));
+  });
+  careHit.textContent = q ? `${pad2(shown)} / ${pad2(DROP.length)} 작품` : `총 ${DROP.length}작품 · ${dropTotal}명`;
+}
+careSearch.addEventListener('input', runCareFilter);
+runCareFilter();
+
+/* ── 프롬프트 + 복사 ── */
+$('#promptList').innerHTML = (DATA.prompts||[]).map((pr,i)=>`
+  <div class="prompt-card">
+    <div class="prompt-hd">
+      <span class="who nem">${esc(pr.who)}</span>
+      <span class="kr">${esc(pr.kr||'')}</span>
+      <span class="l"></span>
+      <span class="mono-sm">${esc(pr.tag||'')}</span>
+      <button class="copybtn" data-copy="${i}">COPY</button>
+    </div>
+    <div class="prompt-bd"><textarea id="pr${i}" spellcheck="false" rows="6">${esc(pr.text)}</textarea></div>
+    <div class="prompt-ft">
+      <span>CLICK TO EDIT · 수정해도 원본 파일은 바뀌지 않습니다</span>
+      <span>${pr.text.length} CHARS</span>
+    </div>
+  </div>`).join('');
+
+function copyText(text, btn){
+  const done=()=>{ const o=btn.textContent; btn.textContent='COPIED ✓'; btn.classList.add('done');
+    setTimeout(()=>{ btn.textContent=o; btn.classList.remove('done'); },1500); };
+  const fallback=()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,ta.value.length);
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+    if(ok) done(); else { btn.textContent='선택 후 Ctrl+C'; setTimeout(()=>btn.textContent='COPY',2200); }
+  };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
+}
+$('#promptList').addEventListener('click', e=>{
+  const b=e.target.closest('[data-copy]'); if(!b) return;
+  copyText($('#pr'+b.dataset.copy).value, b);
+});
+
+/* ── 공지 · 링크 · 연락 ── */
+$('#noticeTxt').innerHTML = DATA.notice||'';
+$('#footLinks').innerHTML = (DATA.links||[]).map(l=>{
+  const has = !!(l.url&&l.url.trim());
+  const inner = `<span class="en nem">${esc(l.label)}</span>`+
+                `<span class="kr">${esc(has?l.kr:(l.kr+' — 링크 입력'))}</span>`+
+                `<span class="ar">${has?'↗':'—'}</span>`;
+  return has
+    ? `<a class="lnk ${l.hot?'hot':''}" href="${esc(l.url)}" target="_blank" rel="noopener">${inner}</a>`
+    : `<span class="lnk empty ${l.hot?'hot':''}">${inner}</span>`;
+}).join('');
+$('#footInfo').innerHTML = (DATA.contact||[]).map(c=>{
+  const has=!!(c.v&&c.v.trim());
+  return `<div class="inf"><span class="k">${esc(c.k)}</span>`+
+         `<span class="v ${has?'':'empty'}">${esc(has?c.v:'입력해주세요')}</span></div>`;
+}).join('');
+
+/* ── 규칙 ── */
+$('#rulesGrid').innerHTML = DATA.rules.map((r,i)=>`
+  <div class="rule-card">
+    <span class="n nem">${pad2(i+1)}</span>
+    <h4 class="nem">${esc(r.en)}</h4>
+    <div class="kt">${esc(r.kr)}</div>
+    <p>${esc(r.body)}</p>
+    <div style="margin-top:auto"><span class="rule-red" style="display:block;width:34px"></span></div>
+  </div>`).join('');
+
+/* ── 시트 (성향표 / 배려) ── */
+const sheet=$('#sheet');
+function openSheet(pane){
+  $$('#sheetTabs button').forEach(b=>b.classList.toggle('on', b.dataset.pane===pane));
+  $$('.sheet-pane').forEach(p=>p.classList.toggle('on', p.dataset.pane===pane));
+  sheet.classList.add('open'); lockScroll(true);
+  $('.sheet-bd').scrollTop=0;
+}
+function closeSheet(){ sheet.classList.remove('open'); lockScroll(false); }
+$$('[data-sheet]').forEach(b=> b.addEventListener('click',()=>openSheet(b.dataset.sheet)) );
+sheet.addEventListener('click', e=>{ if(e.target.closest('[data-close]')) closeSheet(); });
+$('#sheetTabs').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return; openSheet(b.dataset.pane);
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeSheet(); closeLightbox(); }
+});
+let scrollY0=0;
+function lockScroll(on){
+  if(on){ scrollY0=window.scrollY; document.body.style.overflow='hidden'; }
+  else  { document.body.style.overflow=''; window.scrollTo({top:scrollY0,behavior:'instant'}); }
+}
+
+/* ── 챕터 내비 ── */
+const panels=$$('.panel');
+$('#chapnav').innerHTML = panels.map((p,i)=>
+  `<a href="#${p.id}" data-i="${i}"><span class="t">${esc(p.dataset.name)}</span><span class="d"></span></a>`).join('');
+$('#chapbar').innerHTML = panels.map((p,i)=>
+  `<a href="#${p.id}" data-i="${i}"><b>${pad2(i)}</b>${esc(p.dataset.name.split('—')[0].trim())}</a>`).join('');
+const navLinks=[...$$('#chapnav a'),...$$('#chapbar a')];
+
+const tint=$('#tint');
+function setChapter(i){
+  navLinks.forEach(a=>a.classList.toggle('on', +a.dataset.i===i));
+  $('#chNum').textContent=pad2(i);
+  $('#chName').textContent=panels[i].dataset.name;
+  const c=panels[i].dataset.tint||'#c8102e';
+  tint.style.background=`radial-gradient(80% 60% at 50% 50%, ${c}14, transparent 70%)`;
+  tint.classList.add('on');
+  const on=$('#chapbar a.on');
+  if(on) on.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+}
+/* 패널 활성화: threshold 0 — 뷰포트보다 긴 챕터도 확실히 감지 */
+const ioP=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('active'); });
+},{threshold:0,rootMargin:'0px 0px -6% 0px'});
+panels.forEach(p=>ioP.observe(p));
+
+/* 현재 챕터는 스크롤 위치로 판정 (챕터 높이와 무관) */
+let lastCh=-1;
+function syncChapter(){
+  const mark=innerHeight*.34;
+  let idx=0;
+  for(let i=0;i<panels.length;i++){
+    if(panels[i].getBoundingClientRect().top<=mark) idx=i;
+  }
+  if(idx!==lastCh){ lastCh=idx; setChapter(idx); }
+}
+syncChapter();
+
+/* ── 타임라인 스텝 활성화 ── */
+const ioS=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('on'); ioS.unobserve(e.target);} });
+},{threshold:.4});
+$$('#chron .step').forEach(s=>ioS.observe(s));
+
+/* ── 진행 바 ── */
+const prog=$('#prog');
+let raf=0;
+addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+  if(!raf) raf=requestAnimationFrame(()=>{ raf=0; syncChapter(); });
+},{passive:true});
+addEventListener('resize', syncChapter, {passive:true});
+
+$('#year').textContent=new Date().getFullYear();
+
+/* ── 로딩 화면 ── */
+(function(){
+  const ld=$('#loader'), bar=$('#ldBar'), pct=$('#ldPct'),
+        msg=$('#ldMsg'), ttl=$('#ldTitle');
+  if(!ld) return;
+  const MSGS=[[0,'INITIALIZING'],[22,'LOADING ASSETS'],[46,'SYNCING DOSSIER'],
+              [70,'DECRYPTING RECORD'],[92,'ACCESS GRANTED']];
+  const html=document.documentElement;
+  const prevOv=html.style.overflow;
+  html.style.overflow='hidden';
+  let v=0, ready=false, closed=false;
+  const START=Date.now(), MIN=1900;
+
+  const jolt=()=>{ ttl.classList.add('jolt'); setTimeout(()=>ttl.classList.remove('jolt'),190); };
+  const joltT=setInterval(()=>{ if(Math.random()<.55) jolt(); }, 620);
+
+  const tick=setInterval(()=>{
+    const cap = ready ? 100 : 92;
+    if(v<cap) v=Math.min(cap, v + (v<60 ? 5+Math.random()*10 : 1.5+Math.random()*4));
+    bar.style.width=v+'%';
+    pct.textContent=String(Math.floor(v)).padStart(2,'0')+'%';
+    for(let i=MSGS.length-1;i>=0;i--){ if(v>=MSGS[i][0]){ msg.textContent=MSGS[i][1]; break; } }
+    if(v>=100 && !closed){
+      closed=true; clearInterval(tick); clearInterval(joltT);
+      jolt();
+      setTimeout(()=>{
+        ld.classList.add('gone');
+        html.style.overflow=prevOv;
+        setTimeout(()=>{ ld.remove(); if(typeof syncChapter==='function') syncChapter(); }, 800);
+      }, 260);
+    }
+  }, 85);
+
+  const finish=()=>{ const wait=Math.max(0, MIN-(Date.now()-START)); setTimeout(()=>{ ready=true; }, wait); };
+  if(document.readyState==='complete') document.fonts.ready.then(finish);
+  else addEventListener('load', ()=>document.fonts.ready.then(finish));
+  setTimeout(()=>{ ready=true; }, 6000);   /* 안전장치 */
+})();
+
+document.fonts.ready.then(()=>{
+  const ok=[...document.fonts].some(f=>f.family==='NEMESYS'&&f.status==='loaded');
+  console.log(ok?'[VINCERE] NEMESYS 적용됨':'[VINCERE] NEMESYS 없음 → 대체 폰트 사용 중 (fonts/NEMESYS-Regular.ttf)');
+});
+</script>
+</body>
+</html>
