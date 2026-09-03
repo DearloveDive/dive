@@ -147,7 +147,7 @@ a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
 .grid-lines i:last-child{border-right:1px solid rgba(255,255,255,.03)}
 .tint{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 1s,background 1s;opacity:0}
 .tint.on{opacity:1}
-@media(max-width:760px){.tex-grain{opacity:.2}.tex-scan{opacity:.28}.grid-lines{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.tex-grain{opacity:.2}.tex-scan{opacity:.26}}
 
 /* ── 타이포 ── */
 .nem{font-family:var(--f-nem);letter-spacing:.02em;text-transform:uppercase;font-weight:400}
@@ -184,10 +184,6 @@ a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
   padding:calc(clamp(74px,11vh,116px) + var(--sat)) var(--pad) calc(clamp(60px,9vh,92px) + var(--sab));
   max-width:var(--maxw);margin:0 auto;overflow:hidden}
 .panel.tall{min-height:auto;justify-content:flex-start;scroll-snap-align:none}
-@media(max-width:760px){
-  .panel{min-height:auto;padding-top:calc(84px + var(--sat));padding-bottom:calc(64px + var(--sab));scroll-snap-align:none}
-  html{scroll-snap-type:none}
-}
 
 .ch-ghost{position:absolute;z-index:0;pointer-events:none;user-select:none;
   font-family:var(--f-nem);font-size:clamp(150px,32vw,500px);line-height:.75;
@@ -657,7 +653,7 @@ a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
 @media(max-width:960px){
   /* 섹션 헤더 : 좌 제목 / 우 설명 유지 */
   .sec-head{flex-wrap:nowrap;align-items:flex-end}
-  .sec-head-r{text-align:right;max-width:46%;flex:none}
+  .sec-head-r{text-align:right;max-width:42%;flex:none}
 
   /* 01 DOSSIER : 로고 | 본문 2열 */
   .dos-grid{grid-template-columns:1.05fr .95fr;gap:clamp(10px,2.4vw,24px)}
@@ -783,123 +779,46 @@ a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
 }
 
 /* ════════════════════════════════════════════════════════
-   MOBILE — 공통 축소 (여백 · 상단바 · 하단바)
+   MOBILE — 화면 전체를 통째로 축소
+   ────────────────────────────────────────────────────────
+   요소를 하나씩 줄이면 줄바꿈이 어긋나 깨져 보이므로,
+   PC 레이아웃을 그대로 두고 zoom 으로 균일하게 줄입니다.
+   --m-zoom : 작을수록 더 축소 (0.38 ~ 0.55 권장)
    ════════════════════════════════════════════════════════ */
-@media(max-width:760px){
-  :root{--pad:14px}
+@media(max-width:900px){
+  body{--m-zoom:.46;zoom:var(--m-zoom)}
+  html{scroll-snap-type:none}
 
-  /* 패널 여백 */
-  .panel{padding-top:calc(64px + var(--sat));padding-bottom:calc(40px + var(--sab))}
-  .panel:last-of-type{padding-bottom:calc(86px + var(--sab))}
-  .ch-ghost{font-size:clamp(110px,26vw,220px)}
+  /* zoom 으로 축소된 만큼 화면 기준(svh) 값들을 되돌립니다 */
+  /* 좁은 화면에서는 빈 공간이 크게 남으므로 챕터를 내용 높이에 맞춥니다 */
+  .panel{min-height:auto;
+    padding-top:calc(210px + var(--sat) / var(--m-zoom));
+    padding-bottom:calc(190px + var(--sab) / var(--m-zoom));
+    scroll-snap-align:none}
+  .panel#ch0{padding-top:calc(150px + var(--sat) / var(--m-zoom))}
+  .panel:last-of-type{padding-bottom:calc(260px + var(--sab) / var(--m-zoom))}
+  /* vw / svh 는 zoom 의 영향을 받지 않으므로 --m-zoom 으로 나눠 보정합니다 */
+  .ov>.hero-art{--art-h:calc(58svh / var(--m-zoom));
+    --art-y:52%;--art-scrim:.74;--art-dim:.72;
+    width:min(calc(92vw / var(--m-zoom)), calc(var(--art-h) * 1100 / 963))}
+  .portrait{--sign-w:60%}
+  .idcard{width:min(calc(88vw / var(--m-zoom)), calc(62svh / var(--m-zoom) * var(--ar,.628)))}
+  .lightbox figure{max-width:calc(94vw / var(--m-zoom));min-width:0;
+    max-height:calc(84svh / var(--m-zoom))}
+  .lightbox img{max-height:calc(84svh / var(--m-zoom) - 72px)}
+  .idm-in,.lightbox{padding:26px}
+  .idm-head,.idm-foot{width:min(calc(88vw / var(--m-zoom)), calc(62svh / var(--m-zoom) * var(--ar,.628)))}
 
-  /* 상단바 */
-  .topbar-in{padding:8px var(--pad)}
-  .brand b{font-size:12.5px}
-  .brand .mk{width:15px;height:15px}
-  .brand .mk::before{top:7px}.brand .mk::after{left:7px}
-
-  /* 하단 챕터 바 */
-  .chapbar{padding:6px 9px calc(6px + var(--sab));gap:5px}
-  .chapbar a{padding:5px 8px;font-size:7.5px;min-height:26px;gap:4px}
-
-  /* 첫 화면 */
-  .ov-title{font-size:clamp(23px,7.4vw,34px);letter-spacing:.2em;text-indent:.2em;margin-top:6px}
-  .ov-sub{font-size:clamp(19px,6.4vw,30px)}
-  .ov-kr{font-size:9px;letter-spacing:.3em;margin-top:6px}
-  .ov-line{margin-top:13px}
-  .ov-line .mono{font-size:8px}
-  .ov-tags{margin-top:13px;gap:5px}
-  .ov-tags span{padding:5px 9px;font-size:8px;letter-spacing:.1em}
-
-  /* 섹션 헤더 */
-  .sec-head{margin-bottom:16px;gap:10px}
-  .sec-head .idx{font-size:8.5px;margin-bottom:7px;letter-spacing:.16em}
-  .sec-head h2{font-size:clamp(26px,8.6vw,40px)}
-  .sec-head .kr{font-size:9.5px;letter-spacing:.16em;margin-top:8px}
-  .kr-body{font-size:11.5px;line-height:1.75}
-
-  /* 01 DOSSIER */
-  .phrase div{padding:10px 0;gap:10px}
-  .phrase .h{font-size:12px}
-  .phrase .t{font-size:13px}
-  .phrase .te{font-size:9.5px}
-  .dos-meta{gap:6px;margin-top:16px}
-  .mrow .k{font-size:7.5px;width:62px;letter-spacing:.12em}
-  .mrow .v{font-size:11px}
-  .mrow .v.kr{font-size:10.5px}
-  .catch{padding:11px 12px;gap:9px;margin-top:14px}
-  .catch .lat{font-size:clamp(22px,8vw,32px)}
-  .catch .tr{font-size:10.5px;line-height:1.7}
-  .catch .lbl{font-size:7px}
-
-  /* 02 / 03 SUBJECT */
-  .subj-head{margin-bottom:14px}
-  .subj-code{font-size:clamp(38px,13vw,62px)}
-  .subj-epi{font-size:clamp(11px,3.6vw,16px);letter-spacing:.1em}
-  .subj-krn{font-size:10px;letter-spacing:.18em}
-  .portrait::before{font-size:10px;left:10px}
-  .portrait .tagline{font-size:7px;right:10px}
-  .portrait .hud{left:12px;bottom:12px;gap:3px}
-  .portrait .hud span{font-size:7px;letter-spacing:.14em}
-  .spec{margin-bottom:14px}
-  .spec-hd{padding:7px 10px;gap:7px}
-  .spec-hd .org{font-size:9.5px}
-  .spec-hd .cd{font-size:8.5px}
-  .spec-cell{padding:8px 10px}
-  .spec-cell .k{font-size:7px}
-  .spec-cell .v{font-size:11px}
-  .spec-cell .v.en{font-size:11.5px}
-  .rankbadge b{font-size:14px}
-  .ability{padding:10px 12px;gap:6px}
-  .ability .nmk{font-size:14px}
-  .ability .nen{font-size:10px}
-  .ability p{font-size:11px;line-height:1.7}
-  .idbtn{padding:9px 11px;min-height:42px;gap:9px}
-  .idbtn .tx b{font-size:11.5px}
-  .idbtn .tx i{font-size:7px}
-  .trait{padding:11px 0}
-  .trait .th b{font-size:11.5px}
-  .trait .th span{font-size:7px}
-  .trait p{font-size:11.5px;line-height:1.75}
-
-  /* 04 DYNAMIC */
-  .dyn-top{margin:2px 0 20px;gap:10px}
-  .dyn-node .c{font-size:clamp(22px,7.4vw,34px);letter-spacing:.1em;text-indent:.1em}
-  .dyn-node .e{font-size:7.5px;margin-top:5px}
-  .dyn-link{min-width:70px;gap:4px}
-  .dyn-link .lbl{font-size:clamp(22px,7.6vw,32px)}
-  .dyn-link .kr{font-size:7px}
-  .dyn-card{padding:14px;min-height:0;gap:8px}
-  .dyn-card .n{font-size:20px;top:11px;right:12px}
-  .dyn-card h4{font-size:12px}
-  .dyn-card .kt{font-size:12px}
-  .dyn-card p{font-size:11.5px;line-height:1.75}
-  .dyn-quote{margin-top:18px}
-  .dyn-quote .serif-i{font-size:clamp(13px,4.4vw,19px)}
-
-  /* 05 CHRONICLE */
-  .step .card{padding:12px 13px;padding-top:17px}
-  .step .card .tag{font-size:9.5px;margin-bottom:5px}
-  .step .card .ttl{font-size:12.5px}
-  .step .card p{font-size:11.5px;line-height:1.75}
-  .step .card .who{font-size:7px;margin-top:7px}
-  .chron-end .mono{font-size:8.5px}
-
-  /* 06 GALLERY */
-  .gal{gap:7px}
-  .gal .cell{padding:4px}
-  .gal .cap{padding:6px 2px 1px}
-  .gal .cap span{font-size:7px}
-  .gal .art{font-size:9px}
-  .gal-credit{padding:10px 12px;gap:9px;margin-top:14px}
-  .gal-credit .t{font-size:8px}
-  .gal-credit .n{font-size:10.5px}
-
+  /* 터치용 요소는 조금 키워서 누르기 편하게 */
+  .chapbar{padding:14px 16px calc(14px + var(--sab));gap:10px}
+  .chapbar a{padding:11px 15px;font-size:12px;min-height:44px}
+  .idm-cl,.lightbox .cl,.lb-nav{transform:scale(1.15)}
+  .lb-nav{transform:translateY(-50%) scale(1.15)}
 }
 
+/* 아주 좁은 화면은 조금 더 축소 */
 @media(max-width:400px){
-  .sec-head h2{font-size:clamp(23px,8vw,32px)}
+  body{--m-zoom:.42}
 }
 
 </style>
